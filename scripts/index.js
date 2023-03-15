@@ -251,10 +251,11 @@ class UserManager{
                     this.#users.push(user)     
                 }else if(this.#users.some((user)=> users.username===username||this.#users.some((user)=> user.email===email))){
                     alert ('usuario ya existe')  
+                    this.addUser()
                 }else{
                     user = new User (this.#users.lenght+1, fname, lname, username,email,password)
                 }
-            
+                this.loginUser()
             }catch(error){ alert(error)}   
        }
        if(res===2){ 
@@ -283,6 +284,8 @@ class UserManager{
             } 
              this.users[userIndex].login= true 
              alert(`Bienvenido ${validateuser.fname} ${validateuser.lname}!`)
+             cartManager.addCart(validateuser.id)
+             userId=validateuser.id
         } 
         if(res==="no"){
             alert(`Quizas en otro momento`)
@@ -297,9 +300,10 @@ class UserManager{
     
 
 
-
-const productManager = new ProductManager('./database/products.json')
-const cartManager = new CartManager('./database/carts.json')
+let userId=null
+const productManager = new ProductManager()
+const cartManager = new CartManager()
+const userManager = new UserManager()
 
 productManager.addProduct('Añejo Patrón','Tequila 100% Agave, Hecho en México', 6800, 25,'licores',['../assets/imgs/products/anejopatron.jpg'])
 productManager.addProduct('Bombay Shapphire','London Dry Gin, Alc.40%',4800,25,'licores',['../assets/imgs/products/bombay-saphire.webp'])
@@ -313,5 +317,71 @@ productManager.addProduct('Zarapaca XO','Gran Reserva Especial, Solera, Hecho en
 productManager.addProduct('Rutini Malbec','Mendoza, alc. 18% ',2790, 25,'licores',['../assets/imgs/products/rutini-malbec-2021.png'])
 productManager.addProduct(' Santa Teresa 1796','Ron Venezolano Extra Añejo, Alc.40%',7000,25,'licores',['../assets/imgs/products/santa-teresa-1796.jpg'])
 productManager.addProduct('El Enemigo, Malbec','Mendoza. Año 2021',3560,25,'vinos',['../assets/imgs/products/vino-el-enemigo-malbec-botella-750ml-a582a8a18e.webp'])
+console.log(productManager.getProducts())
 
-cartManager.addCart(id)
+userManager.addUser()
+
+function shop (res,seguir){
+    let allProducts = productManager.getProducts()
+  
+    function showProducts(products){
+        let selected=[]
+         products.forEach(product => {
+             selected += `id:${product.id}. nombre:${product.title} precio:${product.price}\n`
+        })
+        alert(`${selected}`)
+        let addProductIndex =promp(`Elige un producto por id si quieres agregarlo: `)
+        if(!userId){
+            alert(`solo puedes comprar si eres usuario`)
+            let isUser=(`eres usuario: 1.si/2.no/3.no me interesa`)
+            while(Number.isNaN(isUser)&& isUser>3 && isUser<1){
+                alert("entre un valor valido")
+                res = prompt(`eres usuario: 1.si/2.no`)
+                parseInt(seguir)
+            }
+            if(isUser= 1) {userManager.loginUser()}
+            if(isUser=2){userManager.addUser()}
+            if(isUser=3) {
+                alert(`Lo siento, quizas en otro momento`)
+                return
+            }
+        }
+        if(parseInt(addProductIndex).lenght < allProducts.lenght && Number.isInteger(parseInt(addProductIndex))){
+            cartManager.addToCart(userId,addProductIndex,getProductById(addProductIndex)) 
+        }
+    }
+
+    let res=promp(`Quieres comprar:1.si/2.no`)
+
+    res = parseInt(res)
+
+    while(Number.isNaN(res)){
+         alert("entre un valor valido")
+         res = prompt(`Quieres comprar:1.si/2.no`)
+         parseInt(res)
+    }
+
+    if(res=== 1){
+        showProducts(allProducts)
+        seguir = prompt(`Quieres seguir comprando1.si/2.no`)
+        while(Number.isNaN(seguir)&& seguir>2 && seguir<1){
+            alert("entre un valor valido")
+            res = prompt(`Quieres comprar:1.si/2.no`)
+            parseInt(seguir)
+        }
+        while(seguir===1){
+        showProducts(allProducts)
+        seguir = prompt(`Quieres seguir comprando1.si/2.no`)
+            }
+        alert(`Gracias por tu compra tu carrito es ${cartManager.getCartById(userId)}`)
+
+    }
+
+    if(res===2){
+        alert(`Lo esperamos pronto`)
+    }
+
+}
+
+
+shop()
