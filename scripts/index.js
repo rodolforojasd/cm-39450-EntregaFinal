@@ -152,18 +152,20 @@ class CartManager {
     }
 
     addToCart(cartId,productId,pm){
-   
+debugger   
       let newCart =  this.getCartById(cartId)
       let productToAdd = pm.getProductsById(productId)
       let newProduct= {}
       let inCartProducts = newCart.products
       let index = inCartProducts.findIndex(product => product.id === productId)
         try{
-debugger            
+           
             if(index === -1){
                 newProduct= {id:productToAdd.id, quantity: 1, price:productToAdd.price,title:productToAdd.title }
                 newCart.products.push(newProduct) 
+                console.log(newProduct)
                 this.updateCart(cartId, newCart)
+                console.log(this.getCartById(cartId))
             }else{
         
                 newProduct= {id:productToAdd.id, quantity: newCart.products[index].quantity + 1 , price:productToAdd.price, title:productToAdd.title}
@@ -358,7 +360,7 @@ productManager.addProduct('El Enemigo, Malbec','Mendoza. Año 2021',3560,25,'vin
 
 
 function shop(shopping,shopMore,carrito, inventory, shelf,total){
-debugger
+
     shelf = ""
     inventory = productManager.getProducts()
     shopping = true
@@ -376,7 +378,8 @@ debugger
 
          
 
-//me costo hacer qeu funcionara un condicional para un numero negativo, es decir los tres condicionales y lo tuve que resolver con esa iteracion
+//me costo hacer qeu funcionara un condicional para un numero negativo, es decir los tres condicionales y lo tuve que resolver con esa iteracion.
+// si podrias ayudarme a entender como funcionaria con tres operadores logicos porque por mas que le trate de dar la vuelta no pude 
 
             while( !inventory.find((p)=>p.id=parseInt(res))  && res !== "salir" ){
 
@@ -396,19 +399,20 @@ debugger
                 cartManager.addToCart(userId,parseInt(res),productManager)
                 cartManager.getCarts()
                 carrito= cartManager.getCartById(userId)
-            }
-
-            if(userId === null && cartManager.carts.length === 0){ 
+            }else if(userId === null && cartManager.carts.length === 0){ 
+                debugger
                 cartManager.addCart()
+                cartManager.addToCart(cartManager.carts.length,parseInt(res),productManager)
+                carrito = cartManager.getCartById(cartManager.carts.length)
+            }else{
                 cartManager.addToCart(cartManager.carts.length,parseInt(res),productManager)
                 carrito = cartManager.getCartById(cartManager.carts.length)
             }
 
             
-            if(userId===null && cartManager.carts.length > 0){
-                cartManager.addToCart(cartManager.carts.length,parseInt(res),productManager)
-                carrito = cartManager.getCartById(cartManager.carts.length)
-            }
+
+            
+            
             
             shopMore = prompt("Quieres seguir comprando: 1.si/2.no ?")
             shopMore=parseInt(shopMore)
@@ -448,7 +452,7 @@ debugger
         alert(`la proxima vez conseguiras algo`)
         return
     }
-    debugger
+   
     let greeting = (userManager.users[userId-1].username)
     alert(`Estos son tus productos: ${greeting}\n ${mostrarCarrito}  \n Este es tu total: ${total}`)    
     alert(`Gracias por tu compra`)
