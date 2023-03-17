@@ -1,19 +1,12 @@
-import { randomUUID } from 'crypto'
-import crypto from 'crypto'
-class Product {
-    constructor({ id, title, description, code, price, status, stock, category, thumbnail}) {
-       
-        if (!title) throw new Error('falta un argumento title')
-        if (!description) throw new Error('falta un argumento')
-        if(Number.isNaN(price)||!price) throw new Error('falta un argumento price o es un tipo invalido')
-        if(Number.isNaN(stock)||!stock) throw new Error('falta un argumento stock o es un tipo invalido')
-        if (!category) throw new Error('falta el argumento category')
-        if (thumbnail.lenght === 0) throw new Error('falta un argumento thumbnail')
+// import { randomUUID } from '../crypto.js'
+// import crypto from '../crypto.js'
 
+class Product {
+    constructor(id, title, description,price, status, stock, category, thumbnail) {
+       
         this.id = id
-        this.nombre = nombre
+        this.title = title
         this.description = description
-        this.code = code
         this.price= price
         this.status=status
         this.stock = stock
@@ -24,38 +17,39 @@ class Product {
 }
 
 class ProductManager {
-    #products
+
   
 
-    constructor(path) {
+    constructor() {
       
-        this.#products
-         = []
+        this.products = []
     }
 
      addProduct(title, description, price, stock,category, thumbnail){
-       const product = null
+       let product ={}
        
         try{
-            if(this.#products.lenght === 0){
-                product = new Product (1, title, description, randomUUID(), price, true, stock, category, thumbnail)
-                this.#products.push(product)     
-            }else if(this.#products.some((product)=> product.title===title||this.#products.some((product)=> product.id===id))){
+            
+            if(this.products.length === 0){
+                product = new Product (1, title, description,price, true, stock, category, thumbnail)
+                this.products.push(product)     
+            }else if(this.products.some((p)=> p.title===title)){
                 throw new Error ('producto ya existe')  
               }else{
-                product = new Product (this.#products.lenght+1, title, description, randomUUID(), price, true, stock, category, thumbnail)
+                product = new Product (this.products.length + 1, title, description, price, true, stock, category, thumbnail)
+                this.products.push(product)  
               }
           
         }catch(error){ console.log(error)}     
     }
 
-         getProducts() {
-        return this.#products  
+    getProducts() {
+        return this.products  
     }
 
      getProductsById(id) {
         
-        const searched = this.#products
+        let searched = this.products
         .find(product => product.id === id)
         if (!searched) {
             throw new Error('product not found')
@@ -65,12 +59,12 @@ class ProductManager {
 
      updateProduct(id, newProduct) {
         
-        const indexSearched = this.#products
+        let indexSearched = this.products
         .findIndex(product => product.id === id)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        this.#products
+        this.products
         [indexSearched] = newProduct
         
         return newProduct
@@ -78,134 +72,153 @@ class ProductManager {
 
      deleteProductById(id) {
         
-        const indexSearched = this.#products
+        let indexSearched = this.products
         .findIndex(product => product.id === id)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        const [deleted] = this.#products
+        let [deleted] = this.products
         .splice(indexSearched, 1)
         
         return deleted
     }
 
-     reset() {
-        this.#products
-         = []
+       reset() {
+        this.products = []
         
     }
 }
 
 class Cart {
-    constructor({ id, products}) {
+    constructor(id, products) {
         if (!products) throw new Error('falta un argumento')       
         this.id = id
-        this.products = products
+        this.products = []
        
+    }
+
+    getTotal(total){
+       total = this.products.reduce((total, p)=> total + p.price*p.quantity,0)
+       return total
     }
 }
 
 class CartManager {
-    #carts
-    #path
+    carts
+    
 
-    constructor(path) {
-        this.#carts = []
+    constructor() {
+        this.carts = []
     }
 
 
     getCarts() {
-        return this.#carts
+        return this.carts
     }
 
-    addCart(id,products=[]) {
-        const newCart = {}
+    addCart(id,products) {
+        let newCart = {}
         try{
-           
-            if(this.#products.lenght === 0){
-                newCart =  new Cart (1,products)
-                this.#carts.push(newCart)
+  
+            if(this.carts.length === 0){
+                id=1
+                products=[]
+                newCart =  new Cart (id,[])
+                console.log(newCart)
+                this.carts.push(newCart)
+            }else if(this.carts.length> 0 && products === undefined){
+                id = this.carts.length+1
+                products = []
+                newCart =  new Cart (id,products)
+                this.carts.push(newCart)
+                console.log(newCart)
             }else{
-                newCart =  new Cart (this.#carts.lenght+1,products)
-                this.#carts.push(newCart)
+                id = this.carts.length+1
+                newCart =  new Cart (id,products)
+                this.carts.push(newCart)
             }
+            }catch(error){console.log(error)}
 
-        }catch(error){console.log(error)}
-        
     }
 
     
     getCartById(id) {
        
-        const searched = this.#carts.find(c => c.id === id)
+        let searched = this.carts.find(c => c.id === id)
         if (!searched) {
             throw new Error('id no encontrado')
         }
         return searched
     }
 
-    addToCart(cartId,productId,getProductById){
-      const cart =  this.getCartById(cartId)
-      const productToAdd = getProductById(productId)
-     try{
-        if(cart.quantity===0){
-            const cartProduct= {id:productToAdd.id,quantity:1, price:productToAdd.price }
-          }else{
-            const cartProduct= {id:productToAdd.id,quantity:quantity+1, price:productToAdd.price }
-          }
-          cart.products.push(cartProduct)
-          this.updateCart(cartId,cart)
-     }catch(error){console.log(error)}
+    addToCart(cartId,productId,pm){
+   
+      let newCart =  this.getCartById(cartId)
+      let productToAdd = pm.getProductsById(productId)
+      let newProduct= {}
+      let inCartProducts = newCart.products
+      let index = inCartProducts.findIndex(product => product.id === productId)
+        try{
+debugger            
+            if(index === -1){
+                newProduct= {id:productToAdd.id, quantity: 1, price:productToAdd.price,title:productToAdd.title }
+                newCart.products.push(newProduct) 
+                this.updateCart(cartId, newCart)
+            }else{
+        
+                newProduct= {id:productToAdd.id, quantity: newCart.products[index].quantity + 1 , price:productToAdd.price, title:productToAdd.title}
+                newCart.products[index] = newProduct
+                this.updateCart(cartId, newCart)
+            }
+        }catch(error){console.log(error)}
 
     }
 
     
     deleteCartById(id) {
        
-        const indexSearched = this.#carts
+        let indexSearched = this.carts
         .findIndex(c => c.id === id)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        const [deleted] = this.#carts
+        let [deleted] = this.carts
         .splice(indexSearched, 1)
         return deleted
     }
 
     updateCart(id, newCart) {
        
-        const indexSearched = this.#carts
-        .findIndex(c => c.id === id)
+        let indexSearched = this.carts.findIndex(c => c.id === id)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        this.#carts
-        [indexSearched] = newCart
+        this.carts[indexSearched] = newCart
         return newCart
     }
 
     deleteCartProductById(cartId,productId) {
        
-        const cart = this.getCartById(cartId)
-        const indexSearched = cart.products
+        let cart = this.getCartById(cartId)
+        let indexSearched = cart.products
         .findIndex(product => product.id === productId)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        const newCart = cart.products
+        let newCart = cart.products
         .splice(indexSearched, 1)
 
         updateCart(cartId, newCart)        
     }
 
     reset() {
-        this.#carts = []
+        this.carts = []
     }
 }
 
 class User {
 
-    constructor(id,fname,lname,username, email, password,salt, login=false){
+    constructor(id,fname,lname,username, email, password, login){
         if(Number.isInteger(fname)) alert('First Name is not a valid input')
         if(Number.isInteger(lname)) alert('Last Name is not a valid input')
         if(email.search("@")===-1)alert ('not a valid email')
@@ -215,47 +228,61 @@ class User {
         this.lname=lname
         this.username=username
         this.email=email
-        this.salt= crypto.randomBytes(128).toString('base64')
-        this.password = crypto.createHmac('sha256', this.salt).update(password).digest('hex')
-        this.login= login
+        this.password=password
+        this.login= false
 
     }
 }
 class UserManager{
-    #users
+
     constructor(){
         this.users= []
     }
+
+    getUsers(){
+        return this.users
+    }
+
     addUser(id,fname,lname,username, email, password){
-       let res = prompt(`Quieres crear un usuario? 1.si/2.no`)
-       res = parseInt(res)
-       while(Number.isNaN(res)){
+
+
+       let res = prompt("Quieres hacer un usuario: 1.si/ 2.no")
+
+        res = parseInt(res)
+       
+        console.log(res)
+     
+       while(res!==1 && res!==2){
             alert("entre un valor valido")
-            res = prompt(`Quieres crear un usuario? 1.si/2.no`)
-            parseInt(res)
+            this.addUser()
        }
-       if(res=== 1){
-            const user = null
+       if(res === 1){
+            let user = null
             fname= prompt(`Dame tu primer nombre`)
-            fname.toLowerCase()
             lname= prompt(`Dame tu primer apellido`)
-            lname.toLowerCase()
             username= prompt(`Escribe tu nombre de usuario`)
-            while(username.lenght>20){username = prompt(`Escribe un nombre de usuario que puedas recordar: `)}
+            while(username.length>20){username = prompt(`Escribe un nombre de usuario que puedas recordar: `)}
             password = prompt(`Dame una clave de por lo menos 8 caracteres`)
-            while(password.lenght < 8){password=prompt(`Dame una clave de por lo menos 8 caracteres`)}
+            while(password.length < 8){password=prompt(`Dame una clave de por lo menos 8 caracteres`)}
+            email= prompt(`Dame un correo`) 
+            while(email.search("@")===-1) { email= prompt(`Dame un correo, valido`)}
 
             try{
-                if(this.#users.lenght === 0){
-                    user = new User (1, fname,lname,username,email,password)
-                    this.#users.push(user)     
-                }else if(this.#users.some((user)=> users.username===username||this.#users.some((user)=> user.email===email))){
+                if(this.users.length === 0){
+                    user = new User (1, fname,lname,username,email,password, false)
+                    this.users.push(user) 
+                    alert(`Eres nuestro primer cliente!: ${username}`) 
+                    this.loginUser()   
+                }else if(this.users.some((user)=> users.username===username||this.users.some((user)=> user.email===email))){
                     alert ('usuario ya existe')  
                     this.addUser()
                 }else{
-                    user = new User (this.#users.lenght+1, fname, lname, username,email,password)
+                    user = new User (this.users.length+1, fname, lname, username,email,password, false)
+                    this.users.push(user)  
+                    alert(`Bienvenido ${username}`)  
+                    this.loginUser()   
                 }
-                this.loginUser()
+               
             }catch(error){ alert(error)}   
        }
        if(res===2){ 
@@ -265,45 +292,56 @@ class UserManager{
     }
         
 
-    getUserById(){
-
+    getUserById(id){
+       
+        try{
+            let searched = this.users.findIndex((user)=>user.id === id)
+            if(searched !== -1){return searched}
+        }catch(error){console.log(error)}
+      
     }  
     
     loginUser(){
-        let res =prompt('Quieres iniciar sesion?: si/no')==="si"
-        res.toLowerCase()
-        if(res==="yes"){
-         
-            let userCheck =prompt(`dame tu usuario o correo`)
-            let password = prompt(`Dame tu contrasena`)        
-            let userIndex= this.users.findIndex((user)=> user.username===userCheck||user.email===userCheck)
-            let validateuser = this.users[userIndex]
-            let validatepassword = validateuser.password
-            if(userIndex > -1||validatepassword!== crypto.createHmac('sha256', validateuser.salt).update(password).digest('hex') ){
-                alert('usuario o contrasena incorrecta')
-            } 
-             this.users[userIndex].login= true 
-             alert(`Bienvenido ${validateuser.fname} ${validateuser.lname}!`)
-             cartManager.addCart(validateuser.id)
-             userId=validateuser.id
-        } 
-        if(res==="no"){
-            alert(`Quizas en otro momento`)
-            return
-        }else{
-            alert(`Respuesta invalida`)
-            return this.loginUser()
+
+        let resp = prompt('Quieres iniciar sesion?: 1.si / 2.no')
+        resp = parseInt(resp)
+
+     
+        while(resp !==1 && resp !==2 ){
+            alert('respuesta invalida')
+            resp = prompt('Quieres iniciar sesion?: 1.si / 2.no')
+            resp = parseInt(resp)  
         }
+
+        if(resp === 1){
+
+            let userCheck =prompt(`dame tu usuario o correo`)
+            let password = prompt(`Dame tu contrasena`) 
+            let index =this.users.findIndex((user)=> (user.email === userCheck || user.username === userCheck))
+            let validateUser = this.users[index !== -1? index: undefined]
+            let validatePassword = validateUser.password
+
+            if(validateUser=== undefined || validatePassword!== password ){
+                alert('usuario o contrasena incorrecta') 
+                return this.loginUser()
+            }
+
+            this.users[ validateUser.id-1].login= true 
+            cartManager.addCart()
+            userId=validateUser.id
+            alert(`Feliz compra: ${validateUser.username}`)
+            return console.log("carrito asignado")
+        }
+        
+        if(resp === 2){ return alert(`Quizas en otro momento`)}
         
     }
 }
     
-
-
 let userId=null
-const productManager = new ProductManager()
-const cartManager = new CartManager()
-const userManager = new UserManager()
+let productManager = new ProductManager()
+let cartManager = new CartManager()
+let userManager = new UserManager()
 
 productManager.addProduct('Añejo Patrón','Tequila 100% Agave, Hecho en México', 6800, 25,'licores',['../assets/imgs/products/anejopatron.jpg'])
 productManager.addProduct('Bombay Shapphire','London Dry Gin, Alc.40%',4800,25,'licores',['../assets/imgs/products/bombay-saphire.webp'])
@@ -317,71 +355,110 @@ productManager.addProduct('Zarapaca XO','Gran Reserva Especial, Solera, Hecho en
 productManager.addProduct('Rutini Malbec','Mendoza, alc. 18% ',2790, 25,'licores',['../assets/imgs/products/rutini-malbec-2021.png'])
 productManager.addProduct(' Santa Teresa 1796','Ron Venezolano Extra Añejo, Alc.40%',7000,25,'licores',['../assets/imgs/products/santa-teresa-1796.jpg'])
 productManager.addProduct('El Enemigo, Malbec','Mendoza. Año 2021',3560,25,'vinos',['../assets/imgs/products/vino-el-enemigo-malbec-botella-750ml-a582a8a18e.webp'])
-console.log(productManager.getProducts())
+
+
+function shop(shopping,shopMore,carrito, inventory, shelf,total){
+debugger
+    shelf = ""
+    inventory = productManager.getProducts()
+    shopping = true
+    while(shopping===true){
+        console.log(inventory.length)
+        inventory.forEach(product => {shelf += `id: ${product.id}. nombre: ${product.title} precio: ${product.price} \n`})
+
+        console.log(shelf)
+
+        function showProducts(res){
+
+            res = prompt(`Estos son nuestros productos :\n ${shelf}; Si deseas alguno elige seleciona su Id, de lo contrario escribe "salir"`)
+
+           
+
+         
+
+//me costo hacer qeu funcionara un condicional para un numero negativo, es decir los tres condicionales y lo tuve que resolver con esa iteracion
+
+            while( !inventory.find((p)=>p.id=parseInt(res))  && res !== "salir" ){
+
+                alert(`respuesta invalida`)
+                res = prompt(`Estos son nuestros productos :\n
+                 ${shelf}; Si deseas alguno elige seleciona su Id, de lo contrario escribe "salir"`)
+            }
+
+           if(res=== 'salir'){
+                
+                alert("Ok, te esperamos en otro momento!")
+                shopping=false
+            }
+            
+
+            if(userId !== null){
+                cartManager.addToCart(userId,parseInt(res),productManager)
+                cartManager.getCarts()
+                carrito= cartManager.getCartById(userId)
+            }
+
+            if(userId === null && cartManager.carts.length === 0){ 
+                cartManager.addCart()
+                cartManager.addToCart(cartManager.carts.length,parseInt(res),productManager)
+                carrito = cartManager.getCartById(cartManager.carts.length)
+            }
+
+            
+            if(userId===null && cartManager.carts.length > 0){
+                cartManager.addToCart(cartManager.carts.length,parseInt(res),productManager)
+                carrito = cartManager.getCartById(cartManager.carts.length)
+            }
+            
+            shopMore = prompt("Quieres seguir comprando: 1.si/2.no ?")
+            shopMore=parseInt(shopMore)
+
+            while(shopMore !== 1 && shopMore !== 2){
+                alert(`respuesta invalida`) 
+                shopMore = prompt("Quieres seguir comprando: 1.si/2.no ?")
+                shopMore=parseInt(shopMore)
+            }
+
+            if(shopMore === 2){shopping = false}
+            if(shopMore===1){shopping=true}
+        }
+
+        showProducts()
+
+    }
+
+    let mostrarCarrito= ""
+
+    carrito.products.forEach((product) => {mostrarCarrito += `
+    id: ${product.id}. nombre: ${product.title} precio: ${product.price} cantidad: ${product.quantity} \n`})
+
+    total = carrito.getTotal()
+
+    if(carrito.products.length > 0 && userId === null){
+       
+        alert(`Estos son tus productos: \n ${mostrarCarrito} \n Este es tu total: ${total}`)
+ 
+        cartManager.carts.pop()
+
+        return (`Gracias por tu compra`)
+
+    }
+
+    if(carrito.products.length === 0){
+        alert(`la proxima vez conseguiras algo`)
+        return
+    }
+    debugger
+    let greeting = (userManager.users[userId-1].username)
+    alert(`Estos son tus productos: ${greeting}\n ${mostrarCarrito}  \n Este es tu total: ${total}`)    
+    alert(`Gracias por tu compra`)
+}  
 
 userManager.addUser()
-
-function shop (res,seguir){
-    let allProducts = productManager.getProducts()
-  
-    function showProducts(products){
-        let selected=[]
-         products.forEach(product => {
-             selected += `id:${product.id}. nombre:${product.title} precio:${product.price}\n`
-        })
-        alert(`${selected}`)
-        let addProductIndex =promp(`Elige un producto por id si quieres agregarlo: `)
-        if(!userId){
-            alert(`solo puedes comprar si eres usuario`)
-            let isUser=(`eres usuario: 1.si/2.no/3.no me interesa`)
-            while(Number.isNaN(isUser)&& isUser>3 && isUser<1){
-                alert("entre un valor valido")
-                res = prompt(`eres usuario: 1.si/2.no`)
-                parseInt(seguir)
-            }
-            if(isUser= 1) {userManager.loginUser()}
-            if(isUser=2){userManager.addUser()}
-            if(isUser=3) {
-                alert(`Lo siento, quizas en otro momento`)
-                return
-            }
-        }
-        if(parseInt(addProductIndex).lenght < allProducts.lenght && Number.isInteger(parseInt(addProductIndex))){
-            cartManager.addToCart(userId,addProductIndex,getProductById(addProductIndex)) 
-        }
-    }
-
-    let res=promp(`Quieres comprar:1.si/2.no`)
-
-    res = parseInt(res)
-
-    while(Number.isNaN(res)){
-         alert("entre un valor valido")
-         res = prompt(`Quieres comprar:1.si/2.no`)
-         parseInt(res)
-    }
-
-    if(res=== 1){
-        showProducts(allProducts)
-        seguir = prompt(`Quieres seguir comprando1.si/2.no`)
-        while(Number.isNaN(seguir)&& seguir>2 && seguir<1){
-            alert("entre un valor valido")
-            res = prompt(`Quieres comprar:1.si/2.no`)
-            parseInt(seguir)
-        }
-        while(seguir===1){
-        showProducts(allProducts)
-        seguir = prompt(`Quieres seguir comprando1.si/2.no`)
-            }
-        alert(`Gracias por tu compra tu carrito es ${cartManager.getCartById(userId)}`)
-
-    }
-
-    if(res===2){
-        alert(`Lo esperamos pronto`)
-    }
-
-}
-
-
+console.log(userId)
 shop()
+
+
+
+
+
