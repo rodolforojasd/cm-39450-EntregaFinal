@@ -1,5 +1,4 @@
-// import { randomUUID } from '../crypto.js'
-// import crypto from '../crypto.js'
+
 
 class Product {
     constructor(id, title, description,price, status, stock, category, thumbnail) {
@@ -152,7 +151,7 @@ class CartManager {
     }
 
     addToCart(cartId,productId,pm){
-debugger   
+
       let newCart =  this.getCartById(cartId)
       let productToAdd = pm.getProductsById(productId)
       let newProduct= {}
@@ -400,7 +399,7 @@ function shop(shopping,shopMore,carrito, inventory, shelf,total){
                 cartManager.getCarts()
                 carrito= cartManager.getCartById(userId)
             }else if(userId === null && cartManager.carts.length === 0){ 
-                debugger
+                
                 cartManager.addCart()
                 cartManager.addToCart(cartManager.carts.length,parseInt(res),productManager)
                 carrito = cartManager.getCartById(cartManager.carts.length)
@@ -459,7 +458,7 @@ function shop(shopping,shopMore,carrito, inventory, shelf,total){
 }  
 
 userManager.addUser()
-console.log(userId)
+
 shop()
 
 
