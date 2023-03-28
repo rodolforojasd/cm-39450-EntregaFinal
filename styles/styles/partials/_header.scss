@@ -1,0 +1,126 @@
+@import"maps-extend-mixin";
+
+.header-area{
+    background-color:var(--primary-color);
+    position:sticky;
+    top:0;
+    z-index: 4;
+    column-gap: 0px;
+    font-size:var(--text-small); 
+
+      
+    .header-area_logo{
+        display:none;
+        margin-left: auto;
+        margin-right: auto;
+        align-self: center;
+        text-align: center;
+        padding: 0.7rem;
+        #logo-big{
+            display:none;
+        }
+    }
+
+    #nav-menu{
+        align-items: center;
+        margin:0;
+        background-color: var(--primary-color)!important;
+        color: var(--alternate-color);
+
+        padding-left: map-get($style-spacings,spacingXSmall );   
+        padding-right:map-get($style-spacings,spacingXSmall );
+        #navbar-toggler-override{
+            border: 0px;
+        }
+        .btn{
+            
+        }
+        #nav-search-button{
+            color: var(--alternate-color);
+            border: 1px solid var(--alternate-color);
+            &:hover{
+                color: var(--primary-color);
+                background-color: var(--alternate-color);
+            } 
+
+        }
+
+        #logo-small{
+            display:inline-block;
+            max-width: var(--text-xlarge);
+            height:var(--text-xlarge);
+            align-self: center;
+        }
+
+        #sign-up-hidden{
+            visibility:hidden;
+        }
+
+    }
+
+
+}
+
+
+    
+   
+
+    
+
+
+@media screen and (min-width: 768px), screen and (orientation: landscape) {
+    .header-area {
+        top: 0px;
+        margin: 0px;
+        position: sticky;
+        column-gap: 0px;
+        font-size: small;
+        height:fit-content;
+
+        .header-area_logo{
+            align-self: center;
+            border-bottom: 0.7px solid var(--alternate-color);
+            display:block;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            padding: 0.5rem;
+            #logo-big{
+                display: block;
+            }
+        }
+
+        #nav-menu{
+            .nav-item{
+                transition-property: border-bottom;
+                transition-delay: 0.2s;
+                transition-duration: 0.7s;
+                transition-timing-function: ease-in-out;
+                &:hover{
+                    border-bottom: 4px solid var(--alternate-color);
+                }
+            }
+
+            #logo-small{
+                display:none;
+                max-width: var(--spacing-medium);
+                height:var(--spacing-medium);
+                justify-self: center;
+                text-align: center;
+            }
+            #sign-up-logo{
+                padding-right: var(--spacing-xsmall);
+                cursor: pointer;
+                transition: transform 1.5 ease-in-out;
+                &:hover{
+                    transform: scale(1.5,1.5);
+                }
+            }
+
+        }
+           
+    }
+        
+}
+
+ 

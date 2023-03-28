@@ -1,0 +1,67 @@
+#header{
+    padding: var(--spacing-small);
+    background-color: white;
+    #big-logo{
+        display: none;
+    }
+    #desktop-cart{
+        display: none;
+    }
+    .bg-body-tertiary{
+        background-color: white;
+        --bs-bg-opacity: 0;
+    }
+
+    #nav-menu{
+        font-size: var(--text-small);
+        background-color: black;
+        color: white;
+        #logo-small{
+            max-height: var(--spacing-xlarge);
+            width: 50px;
+        }
+
+        #sign-up-icon{
+            max-height: var(--spacing-xlarge);
+            width: 50px;
+        }
+        #mobile-cart{
+            max-height: var(--spacing-xlarge);
+            width: 50px; 
+        }
+    }
+       
+}
+        
+    
+@media screen and (min-width: 768px), screen and (orientation: landscape) {
+    #header{
+      
+        #header-logo-area{
+            display: flex;
+            justify-content:space-between;
+            #big-logo{
+                display:block;
+                max-width: 8vw;
+                height: auto;
+                
+            }
+            #desktop-cart{
+                display:block;
+                max-width: 6vw;
+                height: auto;
+                text-align: end;
+            }
+        }
+        
+        #nav-menu{
+            #logo-small{
+                display:none
+            }
+            #mobile-cart{
+                display: none;
+            }
+        }
+    }
+
+}

@@ -1,0 +1,18 @@
+main{
+
+    #add_cart_button{
+        visibility: hidden;
+        display: inline-block;
+        z-index: 20;
+        text-align: center;
+        &:hover{
+         visibility: visible;
+        }
+    }
+    #item_detail{
+        display: none;
+        width: 100vw;
+        height: 80vh;
+        bottom: 0;
+    }
+}
