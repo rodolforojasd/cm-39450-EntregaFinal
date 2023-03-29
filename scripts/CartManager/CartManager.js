@@ -81,6 +81,9 @@ export class CartManager {
     let cartId = 0
     debugger
     let quantity = document.getElementById(`${productId}_amount`)
+     console.log(quantity)
+
+quantity= quantity.value
     
     if(!localStorage.getItem('User')){
         cartId = -1
@@ -97,7 +100,8 @@ export class CartManager {
         }        
         const productToAdd =  pm.getProductById(productId)
         console.log(productToAdd)
-        console.log(newCart)        
+        console.log(newCart)   
+     console.log(quantity )
         // const cartProducts = newCart.products
         const inCart = newCart.products.findIndex(p => p.id === productId)
    
@@ -123,7 +127,8 @@ export class CartManager {
             desktopCart.style.borderBottom = '1px solid black'
             mobileCart.innerText= cartCounter
             mobileCart.style.borderBottom = '1px solid black'
-            this.updateCart(newCart.id, newCart)
+console.log(newCart.id) 
+  this.updateCart(newCart.id, newCart)
             
 
         }catch(error){console.log(error)}

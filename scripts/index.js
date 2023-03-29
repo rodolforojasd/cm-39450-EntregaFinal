@@ -3,7 +3,6 @@ import { CartManager } from "./CartManager/CartManager.js"
 import {UserManager} from  "./UserManager/UserManager.js"
 
 
-
 const productManager = new ProductManager
 const cartManager = new CartManager
 const userManager = new UserManager
@@ -48,7 +47,7 @@ console.log(pageName)
             </div>
             <div id="add_cart_button">  
                     <input id="${p.id}_amount" type="number" min="1" max="${p.stock}">                   
-                    <button id= "${p.id}-addToCart-button" onclick = "cartManager.addToCart(${p.id}, productManager)" type="button" class="btn btn-secondary">Agregar</button>
+                    <button id= "${p.id}-addToCart-button" onclick = "function addToCart(){cartManager.addToCart(${p.id}, productManager)}" type="button" class="btn btn-secondary">Agregar</button>
             </div>
         </div>
         
