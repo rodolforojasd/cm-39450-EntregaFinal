@@ -1,28 +1,39 @@
 import {Cart} from './Cart.js'
 import {UserManager} from '../UserManager/UserManager.js'
+import { Product } from '../ProductManager/Product.js'
+
+
 
 export class CartManager {
-    carts
-    path
 
-    constructor(path) {
-        this.path = path
+
+    constructor() {
         this.carts = []
     }
 
+
+    nameStorageCart(){
+        let name
+        if(!localStorage.getItem('User')){
+            name = 'tempCart'
+        }else{
+            name= 'localCart'
+        } 
+        return name
+    }
     
-    // async loadCarts() {
-    //     // const json = await fs.readFile(this.path, 'utf-8')
-    //     this.carts = 
-    // }
-     getCart(name){
+
+    getStorageCart(){
+ 
+       let name = this.nameStorageCart()
        let inJSON = localStorage.getItem(name)
-       let localCart = JSON.parse(inJSON) 
-       return localCart
+       let localStorageCart = JSON.parse(inJSON) 
+       return localStorageCart
 
     }
 
-    saveCart(name,cart){
+    saveStorageCart(name,cart){
+        name= this.nameStorageCart()
         const inJson =  JSON.stringify(cart)
         localStorage.setItem(name,inJson)
 
@@ -36,32 +47,35 @@ export class CartManager {
 
 
      getCarts() {
-       
         return this.carts
     }
 
      addCart() {
-        try{
-         
-            if(!localStorage.getItem('User')){
-                const tempCart = {id:-1,products:[], userId:-1, temp:true}
-                this.saveCart('tempCart', tempCart)
-                this.carts.push(tempCart)
-            }else{
-
-                if(this.carts.length === 0){
-                    const newCart =  new Cart (1,[], userId, false)
-                    this.carts.push(newCart)
-                    this.saveCart("localCart", newCart)
     
+            let name = this.nameStorageCart()
+            while(!localStorage.getItem(name)){
+                if(!localStorage.getItem('User')){
+                    const tempCart = {id:-1,products:[], userId:-1, temp:true}
+                    this.saveStorageCart(name, tempCart)
+                    this.carts.push(tempCart)
                 }else{
-                    const newCart =  new Cart (this.carts.length + 1,[], userId, false)
-                    this.carts.push(newCart)
-                    this.saveCart("localCart", newCart)
-                }
+    
+                    if(this.carts.length === 0){
+                        const newCart =  new Cart (1,[], userId, false)
+                        this.carts.push(newCart)
+                        this.saveStorageCart(name, newCart)
+        
+                    }else{
+                        const newCart =  new Cart (this.carts.length + 1,[], userId, false)
+                        this.carts.push(newCart)
+                        this.saveStorageCart(name, newCart)
+                    }
+    
+                }    
 
-            }    
-        }catch(error){console.log(error)}
+            }
+            
+       
         
     }
 
@@ -75,65 +89,83 @@ export class CartManager {
         return searched
     }
 
+    getCartProductById(id) {
+        let cart=this.getStorageCart() 
+        const searched = cart.products.find(product => product.id === id)
+        if (!searched) {
+            throw new Error('product not found')
+        }
 
-
-   addToCart(productId,pm){
-    let cartId = 0
-    debugger
-    let quantity = document.getElementById(`${productId}_amount`)
-     console.log(quantity)
-
-quantity= quantity.value
-    
-    if(!localStorage.getItem('User')){
-        cartId = -1
-    }else{
-        cartId= this.getCart('localCart').id
+        return searched
     }
-        let newCart = null
-        let cartCounter = 0
-    
-        if(this.getCartById(cartId) === -1){
-           newCart = this.getCart('tempCart')
+
+    countCartItems(){
+  
+        let name = this.nameStorageCart()
+        let cart = this.getStorageCart(name)
+        let cartCounter= 0
+        if(cart.products.length > 0){
+             cartCounter = cart.products.reduce(
+                (accumulator, p) => accumulator + p.quantity, 0)
+                console.log(cartCounter)
+                return cartCounter
         }else{
-           newCart =  this.getCartById(cartId)
-        }        
-        const productToAdd =  pm.getProductById(productId)
-        console.log(productToAdd)
-        console.log(newCart)   
-     console.log(quantity )
-        // const cartProducts = newCart.products
-        const inCart = newCart.products.findIndex(p => p.id === productId)
-   
-        try{
-            if(inCart === -1){
-                const newProduct= {id: productToAdd.id, quantity: quantity, price: productToAdd.price }
-                newCart.products.push(newProduct)
-
-                 
-            }else{
-                const newProduct= {id: productToAdd.id, quantity: newCart.products[inCart].quantity+quantity, price:productToAdd.price }
-                newCart.products[inCart] = newProduct
-            }
-            console.log(this.getCarts())
-            cartCounter = newCart.products.reduce(
-                (accumulator, p) => accumulator + p.quantity,
-                0
-              )
-            console.log(cartCounter)
-            let desktopCart = document.getElementById("desktop-cart-counter")
-            let mobileCart = document.getElementById("mobile-cart-counter")
-            desktopCart.innerText= cartCounter
-            desktopCart.style.borderBottom = '1px solid black'
-            mobileCart.innerText= cartCounter
-            mobileCart.style.borderBottom = '1px solid black'
-console.log(newCart.id) 
-  this.updateCart(newCart.id, newCart)
-            
-
-        }catch(error){console.log(error)}
-
+            cartCounter = 0
+            return cartCounter
+        }
+  
     }
+
+    getCartTotal(){
+        let name = this.nameStorageCart()
+        let cart = this.getStorageCart(name)
+        let cartTotal = cart.products.reduce(
+            (accumulator, p) => accumulator + (p.quantity*p.price), 0)
+            return cartTotal
+    }  
+    
+
+   addToCart(productId, pm, quantity){
+            
+        let name = this.nameStorageCart()
+        let newCart = []
+        let cartCounter = 0
+        // let addBtn = document.getElementById(`${productId}-addToCart-button`)
+        // let quantityElement = document.getElementById(`${productId}_amount`)
+        
+        const productToAdd =  pm.getProductById(productId)
+        let stock = productToAdd.stock
+
+        
+
+
+        
+        newCart = this.getStorageCart()
+
+        const inCart = newCart.products.findIndex(p => p.id === productId)
+        
+        if(inCart === -1){
+            const newProduct= {id: productToAdd.id, quantity: quantity,title:productToAdd.title, price:productToAdd.price, stock:productToAdd.stock, thumbnail:productToAdd.thumbnail }
+            newCart.products.push(newProduct)
+
+                
+        }else{
+            const newProduct= {id: productToAdd.id, quantity: newCart.products[inCart].quantity+quantity, title:productToAdd.title,price: productToAdd.price, stock:productToAdd.stock, thumbnail:productToAdd.thumbnail }
+            newCart.products[inCart] = newProduct
+        }
+
+       
+        // productToAdd.stock= productToAdd.stock - quantity
+        // console.log(productToAdd)
+        // pm.updateProduct(productId,productToAdd)
+        this.saveStorageCart(name, newCart)
+        cartCounter = this.countCartItems()
+        
+        
+        return cartCounter
+   }
+
+    
 
     
     deleteCartById(id) {
@@ -162,41 +194,47 @@ console.log(newCart.id)
             this.carts = idUpdated
             return deleted
         }
-        
-        
-
-        
+           
     }
 
-    updateCart(id, newCart) {
-     
-        const indexSearched = this.carts.findIndex(c => c.id === id)
+    updateCart(newCart,name ) {
+        name = this.nameStorageCart()
+        let cart = this.getStorageCart()
+        const indexSearched = cart.products.findIndex(p => p.id === id)
 
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        this.carts[indexSearched] = newCart
-        if(!localStorage.getItem('user')){
-            this.saveCart('tempCart', newCart)
-        }else{
-            this.saveCart('localCart', newCart)
-        }
+        this.carts.products[indexSearched] = newCart
+        this.saveStorageCart(name,newCart)
         console.log(newCart)
         return newCart
     }
 
-     deleteCartProductById(cartId,productId) {
-         
-        const cart = this.getCartById(cartId)
-        const indexSearched = cart.products.findIndex(product => product.id === productId)
+
+
+    deleteCartProductById(productId) {
+        debugger
+        let name = this.nameStorageCart()
+        let cart = this.getStorageCart()
+        let newCart = []
+        let indexSearched = cart.products.findIndex(product => product.id === productId)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        const newCart = cart.products.splice(indexSearched, 1)
-
-        this.updateCart(cartId, newCart) 
+        if(cart.products.length === 1){
+            cart.products=[]
+            newCart=cart
+        }else if(indexSearched===0){
+            new
+            newCart = cart.products.splice(indexSearched, 1)
+            console.log(newCart)
+        }
+        this.saveStorageCart(name,newCart) 
 
     }
+
+
 
      reset() {
         this.carts = []

@@ -3,22 +3,39 @@
 import {Product} from "./Product.js"
 
 export class ProductManager {
-    products
-    path
+
 
     constructor(path) {
         this.path = path
         this.products = []
     }
 
+    
+    
+    loadProducts(){
+    
+       let inJSON = localStorage.getItem(this.path)
+       if( inJSON === null){
+        this.saveProducts()
+        inJSON = localStorage.getItem(this.path)
+       }
+       this.products = JSON.parse(inJSON) 
+       
+    }
 
+    saveProducts(name,products){
+        name= this.path
+        products = this.products
+        const inJson =  JSON.stringify(products)
+        localStorage.setItem(name,inJson)
+
+    }
 
 
      addProduct(title, description, price, stock,category, thumbnail){
+       
+        this.loadProducts()
         
-        try{
-             
-
             let id = null
             if(this.products.some((product)=> product.title===title||this.products.some((product)=> product.id===id))){
                 throw new Error ('producto ya existe')  
@@ -28,8 +45,9 @@ export class ProductManager {
                 id = this.products.length + 1
                 let product = new Product (id, title, description, price, true, stock, category, thumbnail)
                 this.products.push(product)
-                console.log(product)
-                console.log(this.getProducts())
+                this.saveProducts()
+                // console.log(product)
+                // console.log(this.getProducts())
                  
             }
 
@@ -37,24 +55,25 @@ export class ProductManager {
                 id =1
                 let  product = new Product ( id, title, description, price, true, stock, category, thumbnail)
                 this.products.push(product)    
-                console.log(product)
-                console.log(this.getProducts()) 
+                this.saveProducts()
+                // console.log(product)
+                // console.log(this.getProducts()) 
                  
             }
 
 
-        }catch(error){ console.log(error)}
+        
        
     }
 
-     getProducts() {
- 
+    getProducts() {
+        this.loadProducts()
         return this.products
         
     }
 
-     getProductById(id) {
- 
+    getProductById(id) {
+        this.loadProducts()
         const searched = this.products.find(product => product.id === id)
         if (!searched) {
             throw new Error('product not found')
@@ -64,17 +83,18 @@ export class ProductManager {
     }
 
      updateProduct(id, newProduct) {
-
+        this.loadProducts()
         const indexSearched = this.products.findIndex(product => product.id === id)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
         this.products[indexSearched] = newProduct
+        this.saveProducts()
         return newProduct
     }
 
-     deletepById(id) {
-
+     deleteProductById(id) {
+        this.loadProducts()
         const indexSearched = this.products.findIndex(p => p.id === id)
         
         if (indexSearched === -1) {
@@ -83,20 +103,22 @@ export class ProductManager {
 
         }else if(indexSearched === this.products[this.products.length-1]) {
 
-            return this.products.pop()
-            
+             this.products.pop()
+             this.saveProducts()
 
         }else if (indexSearched===0){
 
             this.products.shift()
             const idUpdated = this.products.map((p)=> p.id = p.id -1)
             this.products = idUpdated
+            this.saveProducts()
 
         }else{
 
             const [deleted] = this.products.splice(indexSearched, 1)
             const idUpdated= this.products.map((p)=> p.id > indexSearched+1 ? p.id = p.id -1: p.id = p.id)
             this.products = idUpdated
+            this.saveProducts()
             return deleted
         }
         
@@ -107,7 +129,7 @@ export class ProductManager {
 
      reset() {
         this.products= []
-   
+        this.saveProducts()
 
     }
 }

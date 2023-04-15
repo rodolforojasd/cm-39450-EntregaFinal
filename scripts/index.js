@@ -1,90 +1,311 @@
 import { ProductManager } from "./ProductManager/ProductManager.js"
 import { CartManager } from "./CartManager/CartManager.js"
 import {UserManager} from  "./UserManager/UserManager.js"
+import { createInventory } from "./helper/inventory.js"
 
-
-const productManager = new ProductManager
+const productManager = new ProductManager('products')
+createInventory(productManager)
 const cartManager = new CartManager
-const userManager = new UserManager
-productManager.addProduct('Ciney','Cerveza Belga Blonde alc.8 33 cl',3500,45,'cervezas','./assets/imgs/cervezas/ciney-blonde.jpg')
-productManager.addProduct('Amalaya Gran Corte', 'Vino Tinto Blend Salta', 2800,60, 'vinos','./assets/imgs/vinos/Amalaya-Gran-Corte-Barrel-Selection-01-Mercado.png')
-productManager.addProduct('Decantador','Decantador 1 lt cristal de Bohemia',8600,30, 'varios','./assets/imgs/varios/DECANTADOR-DE-VIDRIO-1500ML-MERCADO-LIBRE-1.png' )
-productManager.addProduct('San Pellegrino', 'Aguan con Gas 33 cl', 1800,190, 'bebidas', './assets/imgs/bebidas/SAN-PELLEGRINO-SPARKLING-NATURAL-MINERAL-WATER-VIDRIO-CON-GAS-505ML-MERCADO-LIBRE-1.png')
-
 cartManager.addCart()
+const userManager = new UserManager
 
-console.log(productManager.getProducts())
+let indexPage = "Inicio"
+let cartPage = "Carrito"
+let cartProducts = cartManager.getStorageCart().products
+console.log(cartProducts)
+let products = productManager.getProducts()
 
 let productsShelf = document.getElementById('products_showcase')
+let cartShelf = document.getElementById('cart_showcase')
 let page = document.getElementsByTagName('title')[0]
 let pageName = page.innerText
+let mobileCart = document.getElementById('mobile-cart')
+let desktopCart = document.getElementById('desktop-cart')
+let desktopCartCounter = document.getElementById('desktop-cart-counter')
+let mobileCartCounter = document.getElementById('mobile-cart-counter')
+console.log(mobileCart)
+
 
 console.log(pageName)
+console.log(cartManager.countCartItems()=== 0)
 
-    let products = null
-    if(pageName === "Inicio"){
-        products= productManager.getProducts()
+function isCartEmpty(){
 
-    }else{
-        products=  productManager.getProducts()
-        products = products.filter(p=> p.category === pageName.toLowerCase)
-        console.log(products)
-        
+    while(cartManager.countCartItems()=== 0){
+        desktopCart.style.visibility = "hidden"
+        console.log(mobileCart)
+        mobileCart.style.visibility = "hidden"
+        return
     }
 
-    products.forEach(p => { productsShelf.innerHTML += `
-        <div class= "col-sm-12 col-md-6 col-lg-4">
+    desktopCart.style.visibility = "visible"
+    mobileCart.style.visibility = "visible"
+    desktopCartCounter.innerText = cartManager.countCartItems()
+    mobileCartCounter.innerText = cartManager.countCartItems()
+}  
+    
+isCartEmpty()
+
+
+
+
+function addToCart(event){
+    let productId = event.target.id
+    productId = parseInt(productId.split('-')[0])
+    console.log(productId)
+    let addBtn = document.getElementById(`${productId}-addToCart-button`)
+    let quantityElement = document.getElementById(`${productId}_amount`)
+    let quantity= parseInt(quantityElement.value)
+    let stock = productManager.getProductById(productId).stock
+    let cartCounter = 0
+    // let quantity = cartManager.addToCart(productId,productManager)
+    quantity > stock 
+    ? quantity = stock
+    : quantity 
+    quantityElement.value = quantity
+
+    if(stock === 0){
+            
+        addBtn.className = `${addBtn.className} disabled`
+        addBtn.ariaDisabled = "true"
+        
+    }else{
+
+        addBtn.className = "btn btn-secondary addtocart" 
+        cartCounter= cartManager.addToCart(productId,productManager, quantity)
+        quantityElement.max= stock 
+        desktopCartCounter.innerText= cartCounter
+        mobileCartCounter.innerText= cartCounter
+        isCartEmpty()
+    }
+
+}
+
+function updateCartTotal(){
+    let cartTotal = document.getElementById('cart-total')
+    cartTotal.innerText=` Total : $ ${cartManager.getCartTotal()} `
+}
+
+
+function increaseItem(event){
+
+    let productId = event.target.id
+    productId = parseInt(productId.split('-')[0])
+    let decBtn = document.getElementById(`${productId}-decrease_product_button`)
+    
+    console.log(productId)
+    
+    let addBtn = document.getElementById(`${productId}-increase_product_button`)
+    console.log(productId)
+
+    let quantityElement = document.getElementById(`${productId}-amount_incart`)
+    let quantity= cartManager. getCartProductById(productId).quantity +1
+    quantityElement.value= quantity
+    let stock = productManager.getProductById(productId).stock
+
+    let cartCounter = 0
+    
+    if(quantity > stock){
+            
+        addBtn.className = `${addBtn.className} disabled`
+        addBtn.ariaDisabled = "true"
+        quantityElement.value= stock
+    }else{
+        decBtn.className = "btn btn-secondary cartDecreaseBtn"
+        addBtn.className = "btn btn-secondary cartIncreaseBtn"
+        addBtn.ariaDisabled = "false"
+        cartCounter= cartManager.addToCart(productId,productManager, 1)
+        quantityElement.max= stock 
+        desktopCartCounter.innerText= cartCounter
+        mobileCartCounter.innerText= cartCounter
+        isCartEmpty()
+        updateCartTotal()
+    }
+
+}
+
+function decreaseItem(event){   
+    console.log(event)
+    let productId = event.target.id
+    productId = parseInt(productId.split('-')[0])
+    let decBtn = document.getElementById(`${productId}-decrease_product_button`)
+    console.log(productId)
+    let addBtn = document.getElementById(`${productId}-increase_product_button`)
+    let quantityElement = document.getElementById(`${productId}-amount_incart`)
+    let quantity= cartManager.getCartProductById(productId).quantity 
+    quantityElement.value= quantity
+    let stock = productManager.getProductById(productId).stock
+
+    let cartCounter = 0
+    
+    if(quantity === 0){
+            
+        decBtn.className = `${decBtn.className} disabled`
+        decBtn.ariaDisabled = "true"
+        quantityElement.value= 0
+    }else{
+        addBtn.className = "btn btn-secondary cartIncreaseBtn"
+        decBtn.className = "btn btn-secondary cartIncreaseBtn"
+        decBtn.ariaDisabled = "false"
+        cartCounter= cartManager.addToCart(productId,productManager, -1)
+        quantityElement.max= stock 
+        desktopCartCounter.innerText= cartCounter
+        mobileCartCounter.innerText= cartCounter
+        updateCartTotal()
+        isCartEmpty()
+        
+    }
+    cartManager.getCartTotal()
+}
+
+function deleteFromCart(event){
+    console.log(event)
+    let productId = event.target.id
+    productId = parseInt(productId.split('-')[0])
+    console.log(productId)
+    let res = prompt(`Estas seguro de que quieres eliminar el producto: 1.si/ 2.no`)
+    res= parseInt(res)
+    if(res === 1){
+        cartManager.deleteCartProductById(productId)
+        let cartCounter = cartManager.countCartItems()
+        desktopCartCounter.innerText= cartCounter
+        mobileCartCounter.innerText= cartCounter
+        isCartEmpty()
+        updateCartTotal()
+        displayCart()
+    }else if(res === 2){
+        return
+    }else{
+        alert(`respuesta no valida`)
+    }
+}
+
+function displayProducts(arr, element){
+
+    arr.forEach(p => { element.innerHTML += `
+        <div class= "col-sm-12 col-md-6 col-lg-4 col-xlg-3">
             <div id="${p.id}" class="card">
-            <a id="${p.id}-link" href="#productview/${p.title}">
-                <img id="${p.id}-img"src="${p.thumbnail}" class="card-img-top" alt="${p.title}">
-            </a>
+                <a id="${p.id}-link" href="#productview/${p.title}">
+                    <img id="${p.id}-img"src="${pageName === 'Inicio'? p.thumbnail:'.'+p.thumbnail}" class="card-img-top" alt="${p.title}">
+                </a>
                 <div class="card-body">
                     <h5 class="card-title"> Nombre :  ${p.title}</h5>
                     <p class="card-text">${p.description}.</p>
                     <p id="${p.id}-item_price" class="item-price"> Precio:  $${p.price}</p>
-                 </div>
+                    <div id="add_cart_button">  
+                        <input class= "amount-input" id="${p.id}_amount" type="number" min="1" max="${p.stock}">                   
+                        <button id= "${p.id}-addToCart-button"  type="button" class="btn btn-secondary addtocart">Agregar</button>
+                    </div>
+                </div>
             
             </div>
-            <div id="add_cart_button">  
-                    <input id="${p.id}_amount" type="number" min="1" max="${p.stock}">                   
-                    <button id= "${p.id}-addToCart-button" onclick = "function addToCart(){cartManager.addToCart(${p.id}, productManager)}" type="button" class="btn btn-secondary">Agregar</button>
-            </div>
+        
         </div>
-        
-          `})
-
-
-    // productsShelf.addEventListener("click", (e)=>{
-    //    let productId= e.target.id
-    //    productId=parseInt(productId.slice(0,1))
-    //    let product = productManager.getProductById(productId)
-    //    console.log(productId)
-    //    console.log(product)
-      
-    //     let itemDetail = document.getElementById('item_detail')
-  
-    //     itemDetail.style.display = "block"
-        
-    //     itemDetail.innerHTML = `
-    //     <div class="card mb-3" style="max-width: 99vw; height: 100vw; z-index: 6">
-    //         <div class="row g-0">
-    //             <div class="col-md-4">
-    //             <img src="${product.thumbnail}" class="img-fluid rounded-start" alt="...">
-    //             </div>
-    //             <div class="col-md-8">
-    //             <div class="card-body">
-    //                 <h5 class="card-title">${product.title}</h5>
-    //                 <p class="card-text">${product.description}</p>
-    //                 <h6 class="card-text"><bold class="text-body-secondary">${product.price}</bold></h6>
-    //                 <p class="card-text">${product.stock}</p>
-    //             </div>
-    //             </div>
-    //         </div>
-    //     </div>
-        
-    //     `
-    //    console.log(itemDetail)
-    // })
     
+    `})
+
+    let  btnAddToCart = document.getElementsByClassName('addtocart')
+    console.log(btnAddToCart)
+
+    for (const btn of btnAddToCart) {
+        btn.addEventListener('click', addToCart)
+    }
+
+
+}
+
+function displayCart(arr, element){
+    arr.forEach(p => { element.innerHTML += `
+            
+    
+            <div class="card mb-3" style="max-width: 100%">
+            <div class="row g-0">
+                <div class="row g-0 d-flex align-items-center card-body">
+
+                    <div class="col-2">
+                        <img src=".${p.thumbnail}" class="img-fluid rounded-start" alt="...">
+                    </div>
+                    <div class="col-6 text-center ">
+                        <h4 class="card-title ">${p.title}</h4>
+                    </div>
+                    <div class="col">
+                        
+                        <button id="${p.id}-decrease_product_button" class="btn btn-secondary cartDecreaseBtn">-</button>
+                        <input class= "amount-input_incart" id="${p.id}-amount_incart" placeholder="${p.quantity}" type="number" min="1" max="${p.stock}">
+                        <button id="${p.id}-increase_product_button" class="btn btn-secondary cartIncreaseBtn">+</button>
+                        <p class="card-text"><small class="text-body-secondary"> Hay ${p.stock} disponibles</small></p>
+                    </div>
+                    
+                    <div class="col d-flex justify-content-around">
+                        <h4>$${p.quantity+p.price}</h4>
+                       <button id="${p.id}-delete_button" class="btn btn-outline-secondary deletebtn ">
+                            <i id="${p.id}-delete_icon" class="bi bi-trash"></i>
+                       </button> 
+                        
+                    </div>
+                </div>
+            </div>
+          </div>
+    `})
+
+    let  btnMoreItem = document.getElementsByClassName('cartIncreaseBtn')
+    let  btnLessItem =  document.getElementsByClassName('cartDecreaseBtn')
+    let  btnDeleteItem = document.getElementsByClassName('deletebtn')
+    console.log(btnDeleteItem)
+    for (const btn of btnMoreItem) {
+        btn.addEventListener('click',  increaseItem)
+    }
+    for (const btn of btnDeleteItem) {
+        btn.addEventListener('click', deleteFromCart)
+    }
+    for (const btn of btnLessItem) {
+        btn.addEventListener('click', decreaseItem)
+    }
+
+    
+
+    const cartMain = document.getElementById('cart-container')
+    let shopDiv = document.createElement('div')
+    let content= `<div class="row justify-content-end ">
+    <div class="col-sm-12 col-md-6 col-lg-6 p-1 text-end">
+    <h4 id= "cart-total"> Total : $ ${cartManager.getCartTotal()} </h4>
+    <button id="go_buy-btn" class="btn btn-primary p-1"> Comprar </button>
+    </div>
+    </div>
+    `
+    console.log(content)
+    shopDiv.className = "card mg-2 p-3"
+    shopDiv.id="shop-div"
+    cartMain.appendChild(shopDiv)
+    let newShopDiv =  document.getElementById("shop-div")  
+    console.log(newShopDiv)   
+    newShopDiv.innerHTML= content
+    console.log(newShopDiv.innerHTML)
+ }
+
+
+if(pageName === indexPage){
+    isCartEmpty()
+    desktopCart.style.backgroundImage="url(assets/icons/icon-cart.svg)"
+    mobileCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
+    console.log(products)
+    displayProducts(products,productsShelf)
+
+}else if(pageName === cartPage){
+    cartProducts
+    console.log(cartProducts)
+    isCartEmpty()
+    displayCart(cartProducts, cartShelf)  
+}else{
+    isCartEmpty()
+    desktopCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
+    mobileCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
+    products = products.filter( p => p.category === pageName.toLowerCase())
+    displayProducts(products,productsShelf)
+    console.log(products)
+    
+}
+   
+
     
 
