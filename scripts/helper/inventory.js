@@ -28,15 +28,5 @@ export function createInventory(pm){
     }
 
 
-    async function getBooze() {
-       const resp = await fetch("www.thecocktaildb.com/api/json/v1/1/filter.php?i=Vodka")
-       const data = await resp.json()
-       console.log(data)
-    }
-
-    async function getGin() {
-        const resp = await fetch("www.thecocktaildb.com/images/ingredients/gin.png")
-        const data = await resp.json()
-        console.log(data)
-     }
+    
 }

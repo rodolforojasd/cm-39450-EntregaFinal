@@ -107,7 +107,6 @@ export class CartManager {
         if(cart.products.length > 0){
              cartCounter = cart.products.reduce(
                 (accumulator, p) => accumulator + p.quantity, 0)
-                console.log(cartCounter)
                 return cartCounter
         }else{
             cartCounter = 0
@@ -154,10 +153,6 @@ export class CartManager {
             newCart.products[inCart] = newProduct
         }
 
-       
-        // productToAdd.stock= productToAdd.stock - quantity
-        // console.log(productToAdd)
-        // pm.updateProduct(productId,productToAdd)
         this.saveStorageCart(name, newCart)
         cartCounter = this.countCartItems()
         
@@ -207,28 +202,34 @@ export class CartManager {
         }
         this.carts.products[indexSearched] = newCart
         this.saveStorageCart(name,newCart)
-        console.log(newCart)
         return newCart
     }
 
 
 
     deleteCartProductById(productId) {
-        debugger
+        
         let name = this.nameStorageCart()
         let cart = this.getStorageCart()
         let newCart = []
+        let deleted = {}
         let indexSearched = cart.products.findIndex(product => product.id === productId)
         if (indexSearched === -1) {
             throw new Error('product not found')
         }
-        if(cart.products.length === 1){
+        if(cart.products.length === 0){
             cart.products=[]
             newCart=cart
-        }else if(indexSearched===0){
-            
-            newCart = cart.products.splice(indexSearched, 1)
-            console.log(newCart)
+        }else if(indexSearched===0 && cart.products.length > 0){
+            cart.products.shift()
+            newCart = cart
+        }else if(indexSearched === cart.products[cart.products.length-1]){
+            cart.products.pop()
+            newCart=cart
+        }else{
+            deleted = cart.products.splice(indexSearched, 1)
+            newCart=cart
+
         }
         this.saveStorageCart(name,newCart) 
 

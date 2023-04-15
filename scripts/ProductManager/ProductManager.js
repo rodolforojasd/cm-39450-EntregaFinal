@@ -46,8 +46,7 @@ export class ProductManager {
                 let product = new Product (id, title, description, price, true, stock, category, thumbnail)
                 this.products.push(product)
                 this.saveProducts()
-                // console.log(product)
-                // console.log(this.getProducts())
+
                  
             }
 
@@ -56,8 +55,7 @@ export class ProductManager {
                 let  product = new Product ( id, title, description, price, true, stock, category, thumbnail)
                 this.products.push(product)    
                 this.saveProducts()
-                // console.log(product)
-                // console.log(this.getProducts()) 
+
                  
             }
 

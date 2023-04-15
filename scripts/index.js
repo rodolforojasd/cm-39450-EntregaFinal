@@ -12,7 +12,7 @@ const userManager = new UserManager
 let indexPage = "Inicio"
 let cartPage = "Carrito"
 let cartProducts = cartManager.getStorageCart().products
-console.log(cartProducts)
+
 let products = productManager.getProducts()
 
 let productsShelf = document.getElementById('products_showcase')
@@ -23,17 +23,27 @@ let mobileCart = document.getElementById('mobile-cart')
 let desktopCart = document.getElementById('desktop-cart')
 let desktopCartCounter = document.getElementById('desktop-cart-counter')
 let mobileCartCounter = document.getElementById('mobile-cart-counter')
-console.log(mobileCart)
 
 
-console.log(pageName)
-console.log(cartManager.countCartItems()=== 0)
+async function getBooze(link) {
+    const resp = await fetch(link)
+    const data = await resp.json()
+    console.log(data)
+    const inJson = JSON.stringify(data)
+    sessionStorage.setItem('ingredientList',data)
+    
+}
+
+
+
+  getBooze("https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list")
+
+
 
 function isCartEmpty(){
 
     while(cartManager.countCartItems()=== 0){
         desktopCart.style.visibility = "hidden"
-        console.log(mobileCart)
         mobileCart.style.visibility = "hidden"
         return
     }
@@ -52,7 +62,6 @@ isCartEmpty()
 function addToCart(event){
     let productId = event.target.id
     productId = parseInt(productId.split('-')[0])
-    console.log(productId)
     let addBtn = document.getElementById(`${productId}-addToCart-button`)
     let quantityElement = document.getElementById(`${productId}_amount`)
     let quantity= parseInt(quantityElement.value)
@@ -93,10 +102,10 @@ function increaseItem(event){
     productId = parseInt(productId.split('-')[0])
     let decBtn = document.getElementById(`${productId}-decrease_product_button`)
     
-    console.log(productId)
+
     
     let addBtn = document.getElementById(`${productId}-increase_product_button`)
-    console.log(productId)
+
 
     let quantityElement = document.getElementById(`${productId}-amount_incart`)
     let quantity= cartManager. getCartProductById(productId).quantity +1
@@ -125,11 +134,10 @@ function increaseItem(event){
 }
 
 function decreaseItem(event){   
-    console.log(event)
+
     let productId = event.target.id
     productId = parseInt(productId.split('-')[0])
     let decBtn = document.getElementById(`${productId}-decrease_product_button`)
-    console.log(productId)
     let addBtn = document.getElementById(`${productId}-increase_product_button`)
     let quantityElement = document.getElementById(`${productId}-amount_incart`)
     let quantity= cartManager.getCartProductById(productId).quantity 
@@ -159,10 +167,9 @@ function decreaseItem(event){
 }
 
 function deleteFromCart(event){
-    console.log(event)
+
     let productId = event.target.id
     productId = parseInt(productId.split('-')[0])
-    console.log(productId)
     let res = prompt(`Estas seguro de que quieres eliminar el producto: 1.si/ 2.no`)
     res= parseInt(res)
     if(res === 1){
@@ -172,7 +179,7 @@ function deleteFromCart(event){
         mobileCartCounter.innerText= cartCounter
         isCartEmpty()
         updateCartTotal()
-        displayCart()
+        window.location.reload();
     }else if(res === 2){
         return
     }else{
@@ -205,7 +212,6 @@ function displayProducts(arr, element){
     `})
 
     let  btnAddToCart = document.getElementsByClassName('addtocart')
-    console.log(btnAddToCart)
 
     for (const btn of btnAddToCart) {
         btn.addEventListener('click', addToCart)
@@ -251,7 +257,6 @@ function displayCart(arr, element){
     let  btnMoreItem = document.getElementsByClassName('cartIncreaseBtn')
     let  btnLessItem =  document.getElementsByClassName('cartDecreaseBtn')
     let  btnDeleteItem = document.getElementsByClassName('deletebtn')
-    console.log(btnDeleteItem)
     for (const btn of btnMoreItem) {
         btn.addEventListener('click',  increaseItem)
     }
@@ -273,14 +278,13 @@ function displayCart(arr, element){
     </div>
     </div>
     `
-    console.log(content)
+
     shopDiv.className = "card mg-2 p-3"
     shopDiv.id="shop-div"
     cartMain.appendChild(shopDiv)
     let newShopDiv =  document.getElementById("shop-div")  
-    console.log(newShopDiv)   
     newShopDiv.innerHTML= content
-    console.log(newShopDiv.innerHTML)
+
  }
 
 
@@ -288,12 +292,11 @@ if(pageName === indexPage){
     isCartEmpty()
     desktopCart.style.backgroundImage="url(assets/icons/icon-cart.svg)"
     mobileCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
-    console.log(products)
+
     displayProducts(products,productsShelf)
 
 }else if(pageName === cartPage){
     cartProducts
-    console.log(cartProducts)
     isCartEmpty()
     displayCart(cartProducts, cartShelf)  
 }else{
@@ -302,7 +305,7 @@ if(pageName === indexPage){
     mobileCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
     products = products.filter( p => p.category === pageName.toLowerCase())
     displayProducts(products,productsShelf)
-    console.log(products)
+
     
 }
    
