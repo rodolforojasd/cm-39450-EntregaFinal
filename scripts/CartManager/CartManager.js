@@ -226,7 +226,7 @@ export class CartManager {
             cart.products=[]
             newCart=cart
         }else if(indexSearched===0){
-            new
+            
             newCart = cart.products.splice(indexSearched, 1)
             console.log(newCart)
         }
