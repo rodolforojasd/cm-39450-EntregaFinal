@@ -9,11 +9,11 @@
     <link rel="stylesheet" type="text/css" href="../styles/style.css" >
     <title>Carrito</title>
 </head>
-<body>
+<body class="container-fluid">
     <header id="header" class="header-area">
         <div id="header-logo-area"class="row">
             <div class="col">
-                <a href="../index.html"><img id="big-logo"  src="../assets/icons/logo.webp"></a>
+                <a href="../index.html"><img class="icon" id="big-logo"  src="../assets/icons/logo.webp"></a>
             </div>
             <div id="desktop-cart" class="col">
                 <a id="cart-link" href="../pages/cart.html">
@@ -25,14 +25,24 @@
         <nav id ="nav-menu" class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
             <a class="navbar-brand" href="../index.html">
-                <img id="logo-small" src="../assets/icons/logo.webp">
-            </a>
-            <img id="sign-up-icon" src="../assets/icons/user_icon.svg">
-            <div id="mobile-cart">
+                <img id="logo-small" src="../assets/icons/faviconb.svg">
+            </a >
+            
+                <img type="button" id="sign-up-icon" src="../assets/icons/user_icon.svg">
+            
+           
+            
+            
+           <div id="cart-wrapper">
+                <div id="mobile-cart">      
+                </div>                    
                 <a id="mobile-cart-link" href="../pages/cart.html">
                     <span id="mobile-cart-counter"></span>
                 </a>
-            </div>   
+            </div>
+            
+            
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -56,6 +66,9 @@
                     <a class="nav-link" href="../pages/licores.html">Licores</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="../pages/bebidas.html">Bebidas</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="../pages/comida.html">Comida</a>
                 </li>
                 <li class="nav-item">
@@ -68,19 +81,105 @@
                     <a class="nav-link" href="../pages/contacto.html">Contacto</a>
                 </li>
                 </ul>
-                <form id = "search_bar" class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
             </div>
         </nav>
+        <form id ="search_bar" class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
     </header>
     <main id ="cart-container" class="container">
-
         <section id="cart_showcase" class="row"></section>
     </main>
-    <script type="module" src="../scripts/index.js"></script> 
+
+    <footer id="footer-section" class="container-fluid">
+        <div class="row text-center">
+            <section class="col-sm-12 col-md-6 col-lg-4 col-xlg-4">
+                <div class="row footer_wrapper">
+                    <a href="../index.html"><img class="icon" id="footer-logo"  src="/assets/icons/logo.webp"></a>
+                </div>
+                <div class="row footer_wrapper">
+                    <input id="footer-newsletter" placeholder="Entra tu correo y recibe nuestras ofertas!">
+                </div>
+                <div class="row text-center footer_wrapper ">
+                    <i class="bi bi-instagram"></i>
+                    <i class="bi bi-twitter"></i>
+                    <i class="bi bi-whatsapp"></i>
+                </div>
+                
+            </section>
+            <section class="col-sm-6 col-md-6 col-lg-4 col-xlg-4">
+                <div class=" row footer_wrapper">
+                    
+                    <h4 class="text-center">Directorio</h4>
+                    <div class="col text-start directory-col-l">
+                        <a class="footer_link" href="../pages/whiskies.html">
+                            <p class="footer-text">whiskies</p>
+                        </a>
+                        <a class="footer_link" href="../pages/vinos.html">
+                            <p class="footer-text">vinos</p>
+                        </a>
+                        <a class="footer_link" href="../pages/cervezas.html">
+                            <p class="footer-text">cervezas</p> 
+                        </a>
+                        <a class="footer_link" href="../pages/licores.html">
+                            <p class="footer-text">licores</p>
+                        </a>
+                        <a class="footer_link" href="../pages/burbujas.html">
+                            <p class="footer-text">burbujas</p> 
+                        </a>
+                        
+                       
+                        
+                        
+                        
+                    </div>
+                    <div class="col text-start directory-col-r">
+                        <a href="../pages/comida.html">
+                            <p class="footer-text">comida</p>
+                        </a>
+                        <a href="../pages/bebidas.html">
+                            <p class="footer-text">bebidas</p>
+                        </a>
+                        <a href="../pages/varios.html">
+                            <p class="footer-text">varios</p> 
+                        </a>
+                        <a href="../pages/nosotros.html">
+                            <p class="footer-text">sobre nosotros</p>
+                        </a>
+                        <a href="../pages/contacto.html">
+                            <p class="footer-text">contáctanos</p> 
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col-sm-6 col-md-6 col-lg-4 col-xlg-4">
+                <div class=" row footer_wrapper">
+                    
+                    <h4 class="text-center">Delivery</h4>
+                    <div class="row text-center ">
+                        <p> De Lunes a Sabado desde las 8 am hasta las 6pm</p>
+                        <p> Todas las compras realizadas antes de las 2pm se entregan el mismo día</p>
+                
+                    </div>
+                </div>
+                <div class=" row footer_wrapper">
+                    
+                    <h4 class="text-center">Medios de Pago</h4>
+                    <div class="col text-center ">
+                        <img class="footer-payment-icon" src="../assets/icons/icons8-mastercard-logo-100.svg">
+                        <img class="footer-payment-icon" src="../assets/icons/icons8-visa-100.svg">
+                        <img class="footer-payment-icon" src="../assets/icons/icons8-mercado-pago-100.svg">
+                
+                    </div>
+                </div>      
+            </section>
+        </div>
+        
+    </footer>
+   <script type="module" src="../scripts/index.js"></script>  
     <script nomodule src="../script/fallback.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
 </body>

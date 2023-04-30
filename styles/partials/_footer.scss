@@ -1,0 +1,117 @@
+body{
+    #footer-section{
+        background-color: black;
+        color: white;
+        padding-left: var(--spacing-small);
+        padding-right: var(--spacing-small);
+        .footer_wrapper{
+            padding-top: var(--spacing-small);
+            padding-bottom:var(--spacing-xsmall) ;
+            justify-content: center;
+            
+            h4{
+                font-size: 2.1rem;
+                text-align: center;
+                padding-top: var(--spacing-xsmall);
+                padding-bottom: var(--spacing-small);
+            }
+            .directory-col-r{
+                margin: 0;
+                padding-right: 10%;
+            }
+            .directory-col-l{
+                margin: 0;
+                padding-left: 30%;
+            }
+            .footer-text{
+                font-size: var(--text-base);
+                color:white;
+            }
+            #footer-newsletter{
+                width: 60%;
+                font-size: var(--text-small);
+                
+                
+            }
+            .icon{
+                filter:brightness(100);
+                width: 11vw;
+            }
+            #footer-logo{
+                width: 25vw;
+               
+            }
+            .bi{
+                display:block;
+                width: 1vw;
+                height: auto;
+                font-size: var(--text-medium);
+                padding: var(--text-base);
+            }               
+            
+            .footer-payment-icon{
+                width: 9vw;
+                padding: 1rem;
+            }
+            
+        }
+        
+    }
+}
+
+@media screen and (min-width: 768px), screen and (orientation: landscape){
+   body{
+        #footer-section{
+            .footer_wrapper{
+                padding-top: var(--spacing-small);
+                padding-bottom:var(--spacing-xsmall) ;
+                justify-content: center;
+                
+                h4{
+                    font-size: 2.1rem;
+                    text-align: center;
+                    padding-top: var(--spacing-xsmall);
+                    padding-bottom: var(--spacing-small);
+                }
+                .directory-col-r{
+                    margin: 0;
+                    padding-right: 10%;
+                }
+                .directory-col-l{
+                    margin: 0;
+                    padding-left: 30%;
+                }
+                .footer-text{
+                    font-size: var(--text-base);
+                    color:white;
+                }
+                #footer-newsletter{
+                    width: 60%;
+                    font-size: var(--text-small);
+                    
+                    
+                }
+                .icon{
+                    filter:brightness(100);
+                    width: 11vw;
+                }
+                #footer-logo{
+                    width: 15vw;
+                   
+                }
+                .bi{
+                    display:block;
+                    width: 5vw;
+                    height: auto;
+                    font-size: var(--text-medium);
+                    
+                }
+                .footer-payment-icon{
+                    width: 2.5vw;
+                    padding: 0.5rem;
+                }
+            }
+        }
+    
+    }
+}

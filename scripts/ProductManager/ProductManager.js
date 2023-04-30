@@ -10,8 +10,6 @@ export class ProductManager {
         this.products = []
     }
 
-    
-    
     loadProducts(){
     
        let inJSON = localStorage.getItem(this.path)
@@ -31,37 +29,31 @@ export class ProductManager {
 
     }
 
-
-     addProduct(title, description, price, stock,category, thumbnail){
-       
+    addProduct(title, description,abv,price,stock,category,thumbnail,db){
+        
         this.loadProducts()
         
-            let id = null
-            if(this.products.some((product)=> product.title===title||this.products.some((product)=> product.id===id))){
-                throw new Error ('producto ya existe')  
-            }
-            
-            if(this.products.length > 0){
-                id = this.products.length + 1
-                let product = new Product (id, title, description, price, true, stock, category, thumbnail)
-                this.products.push(product)
-                this.saveProducts()
-
-                 
-            }
-
-            if(this.products.length === 0){
-                id =1
-                let  product = new Product ( id, title, description, price, true, stock, category, thumbnail)
-                this.products.push(product)    
-                this.saveProducts()
-
-                 
-            }
-
-
+        let id = null
+        if(this.products.some((product)=> product.title===title||this.products.some((product)=> product.id===id))){
+            console.log(title)
+            throw new Error ('producto ya existe')  
+        }
         
-       
+        if(this.products.length > 0){
+            id = this.products.length + 1
+            let product = new Product (id, title, description, abv, price, true, stock, category, thumbnail,db)
+            this.products.push(product)
+            this.saveProducts()
+    
+        }
+
+        if(this.products.length === 0){
+            id =1
+            let  product = new Product ( id, title, description,abv, price, true, stock, category, thumbnail,db)
+            this.products.push(product)    
+            this.saveProducts()
+   
+        }
     }
 
     getProducts() {
@@ -120,12 +112,39 @@ export class ProductManager {
             return deleted
         }
         
-        
-
-        
     }
 
-     reset() {
+    copyProductsByIds(idsArr,listName){
+        
+        let listProducts =[]
+        this.loadProducts()
+        let inJSON = localStorage.getItem(listName)
+        while( inJSON !== null){
+            listProducts = JSON.parse(inJSON)
+            break
+        }
+        idsArr.forEach(id=>{
+            listProducts.push(this.products[id-1])                
+        })    
+        inJSON = JSON.stringify(listProducts)
+        localStorage.setItem(listName,inJSON)
+        
+    }
+ 
+    getListProducts(listName){
+    
+        let inJSON = localStorage.getItem(listName)
+        let listProducts= []
+
+       if(inJSON === null){
+            return "no list found"
+       } else{
+            listProducts = JSON.parse(inJSON)
+       }
+        return listProducts
+    }
+
+    reset() {
         this.products= []
         this.saveProducts()
 

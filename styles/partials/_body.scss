@@ -1,3 +1,93 @@
-body{
-    background-color: white;
-}
+
+
+
+    body{
+
+        background-color: white;
+        #sign-up-wrapper{
+            position: absolute;
+            z-index: 12;
+            background-color:white;
+            top: 40%;
+            left: 15%;
+            color:black;
+            width: 70%;
+            height: 50%;
+            text-align: center;
+            margin-right: auto;
+            margin-left: auto;
+            padding-top: var(--spacing-xsmall);
+            border-radius: 0.375rem;
+            border: 1px solid black;
+            
+                #sign-up-container{
+                    display: flex;
+                    justify-content: center;
+                    font-size: var(--text-base);
+                    row-gap: var(--spacing-base);
+                    
+                    .close-btn{
+                        font-size: var(--spacing-xsmall);
+                        font-weight:bold;
+                        margin-bottom: var(--spacing-medium);
+                        position: absolute;
+                        right: 1%;
+                        
+                    }
+                    h2{
+                        padding: var(--spacing-base);
+                    }
+                    #sign-up-form{
+                        padding: var(--spacing-large);
+                        width: 40vw;
+                        font-size: var(--text-small);
+                       
+                    }
+                    #login-btn{
+                        display: block;
+                        width: 10vw;
+                        margin-left: auto;
+                        margin-right: auto;
+                        font-size: var(--text-small);
+                    }
+                    #google-login-btn{
+                        padding: var(--spacing-xsmall);
+                        margin-bottom: var(--spacing-base);
+                        font-size: var(--text-small);
+                    }
+                    h4{
+                       padding-top: var(--spacing-medium);
+                       font-size: var(--spacing-medium);
+                        &:hover{
+                            color: darkgray;
+                        }
+                    }
+                }
+                
+        }
+
+        #registration-wrapper{
+            @extend #sign-up-wrapper;
+            font-size: var(--text-base);
+            .registration-screen{
+               
+               padding-left: var(--spacing-large);
+               padding-right: var(--spacing-large);
+            }
+            
+
+            .close-btn{
+               font-size: var(--spacing-xsmall);
+                font-weight:bold;
+                margin-bottom: var(--spacing-medium);
+                position: absolute;
+                right: 1%;
+            }
+
+            #create-user{
+                @extend #login-btn;
+            }
+        }
+    }
+
+

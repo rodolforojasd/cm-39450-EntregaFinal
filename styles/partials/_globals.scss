@@ -15,7 +15,7 @@
     --highlight-filter:invert(44%) sepia(27%) saturate(5555%) hue-rotate(27deg) brightness(106%) contrast(104%);
     --primary-color:#FFF8EC;
     --footer-font-color:#949392;
-    
+    $input-btn-font-size: --text-base;
     
     /*Font-family*/
     --font-body: 'Poppins', sans-serif;
@@ -47,12 +47,37 @@
     
     html{
         font-size: 62.5%;
+        .icon{
+            filter:brightness(0)
+            }
     }
 
     body{
-    
+        .form-control{
+            font-size: var(--text-small);
+        }
         color: var(--alternate-color);
         text-decoration: none;
+
+        .btn-primary{
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #000000;
+            --bs-btn-border-color: #000000;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #404040;
+            --bs-btn-hover-border-color:  #464646;
+            --bs-btn-focus-shadow-rgb: 49,132,253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #080808;
+            --bs-btn-active-border-color: #171717;
+            --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #5e5e5e;
+            --bs-btn-disabled-border-color:  #5e5e5e;
+            --bs-btn-font-size: var(--text-small);
+            --bs-btn-padding: var(--spacing-medium)
+
+        }
         main{
             margin: 0px;
             padding: 0px;
@@ -101,7 +126,9 @@
         text-align: center;
         }
     
-    
+        h4{
+        font-size: 1.5rem;
+        }
         p{
         font-size: var(--text-base);
         }
@@ -142,7 +169,14 @@
     --text-medium: 3.2rem;
     --text-base: 1.9rem;
     --text-small: 1.4rem;
-
+    
+    }
+    
+    html{
+        font-size: 62.5%;
+        .icon{
+            filter:brightness(0)
+            }
     }
     
     a{

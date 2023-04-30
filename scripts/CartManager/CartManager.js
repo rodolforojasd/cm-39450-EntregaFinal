@@ -1,5 +1,5 @@
 import {Cart} from './Cart.js'
-import {UserManager} from '../UserManager/UserManager.js'
+// import {UserManager} from '../UserManager/UserManager.js'
 import { Product } from '../ProductManager/Product.js'
 
 
@@ -135,21 +135,17 @@ export class CartManager {
         const productToAdd =  pm.getProductById(productId)
         let stock = productToAdd.stock
 
-        
-
-
-        
         newCart = this.getStorageCart()
 
         const inCart = newCart.products.findIndex(p => p.id === productId)
         
         if(inCart === -1){
-            const newProduct= {id: productToAdd.id, quantity: quantity,title:productToAdd.title, price:productToAdd.price, stock:productToAdd.stock, thumbnail:productToAdd.thumbnail }
+            const newProduct= {id: productToAdd.id, quantity: quantity,title:productToAdd.title, price:productToAdd.price, stock:productToAdd.stock, thumbnail:productToAdd.thumbnail, db:productToAdd.db }
             newCart.products.push(newProduct)
 
                 
         }else{
-            const newProduct= {id: productToAdd.id, quantity: newCart.products[inCart].quantity+quantity, title:productToAdd.title,price: productToAdd.price, stock:productToAdd.stock, thumbnail:productToAdd.thumbnail }
+            const newProduct= {id: productToAdd.id, quantity: newCart.products[inCart].quantity+quantity, title:productToAdd.title,price: productToAdd.price, stock:productToAdd.stock, thumbnail:productToAdd.thumbnail, db:productToAdd.db }
             newCart.products[inCart] = newProduct
         }
 
@@ -192,17 +188,11 @@ export class CartManager {
            
     }
 
-    updateCart(newCart,name ) {
+    updateCart(newCart,name) {
         name = this.nameStorageCart()
-        let cart = this.getStorageCart()
-        const indexSearched = cart.products.findIndex(p => p.id === id)
-
-        if (indexSearched === -1) {
-            throw new Error('product not found')
-        }
-        this.carts.products[indexSearched] = newCart
+        let cart = this.getStorageCart(name)
         this.saveStorageCart(name,newCart)
-        return newCart
+        
     }
 
 

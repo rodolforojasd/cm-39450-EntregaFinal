@@ -1,32 +1,259 @@
 @import'./globals';
 main{
-    #products_showcase{
+
+    .banner-img{
+        margin: 0;
+        padding: 0;
+        aspect-ratio: 3/1.2;
+    }
+    .nosotros_bannner{
+        aspect-ratio: 2/1;
+        width: 100%;
+        
+    }
+    .carousel-control-next-icon{
+        width: var(--spacing-xlarge);    
+        
+    }
+
+
+
+    #products_showcase,#month_selection,#national_selection,#imported_selection {
 
         .card{
+            h3{
+                font-size: var(--text-medium);
+                margin-bottom: var(--spacing-xsmall);
+            }
+            h4{
+                font-size: var(--text-small);
+            }
+            p{
+                font-size: var(--text-base);
+                font-weight: bold;
+            }
             margin: var( --spacing-small);
             .btn-secondary{
                 width: 30%;
             }
-            .amount-input{
-                width: 20%;
-            }   
-            
+            #add_cart_button{
+                    text-align: center;
+                    .addtocart{
+                        @extend .btn-primary;
+                        margin-left: auto;
+                        margin-right: auto;
+                        width: 45%;
+                        height:  auto ;
+                    }
+                    .disable{
+                        color: lightgray;
+                        background-color: white;
+                    }
+                    .amount-wrapper{
+                        display: flex;
+                        font-size: var(--text-base);
+                        border: 1px solid gainsboro;
+                        border-radius: 15px 15px 15px 15px;
+                        justify-content: space-around;
+                        width: 45%;                       
+                        margin-right:auto;
+                        margin-left: auto;
+                        z-index: 4;
+                        margin-bottom: var(--spacing-xsmall);
+                        .amount-btn{
+                            width: 19%;
+                            font-weight: bold;
+                            text-align: center;
+                            z-index: index 2; 
+                            &:hover{
+                                background-color:lightgrey;
+                                color:white;
+                                font-weight: bolder;
+                            } 
+
+                        }
+                        .disabled{
+                            background-color:white;
+                            color:lightgrey; 
+                            &:hover{
+                                background-color:white;
+                                color:lightgrey; 
+                            }
+                        }
+                        .decrease-btn{
+                            border-radius: 15px 0px 0px 15px;
+                        }
+                        .increase-btn{
+                            border-radius: 0px 15px 15px 0px;
+                        }
+                        .amount-input{
+                            width: 60%;
+                            border: none;
+                            text-align: center;
+                            
+                        }  
+                    }
+           
+                }
         }
-    //     #add_cart_button{
-    //         visibility: hidden;
-    //         display: inline-block;
-    //         z-index: 20;
-    //         text-align: center;
-    //         &:hover{
-    //          visibility: visible;
-    //         }
-    //     }
-    //     #item_detail{
-    //         display: none;
-    //         width: 100vw;
-    //         height: 80vh;
-    //         bottom: 0;
-    //     }
-    // }
+            
+    }
+   
+    #cart_showcase{
+        padding-top: var(--spacing-medium);
+        .cart-card{
+            font-size: var(--text-base);
+            .rounded-start{
+                margin-top: var(--spacing-small);
+            }
+            .amount-wrapper{
+                display: flex;
+                font-size: var(--text-base);
+                border: 1px solid gainsboro;
+                border-radius: 15px 15px 15px 15px;
+                justify-content: space-around;
+                width: 45%;                       
+                margin-right:auto;
+                margin-left: auto;
+                z-index: 4;
+                margin-bottom: var(--spacing-xsmall);
+                .amount-btn{
+                    width: 19%;
+                    font-weight: bold;
+                    text-align: center;
+                    
+                    &:hover{
+                        background-color:gainsboro ;
+                        color:white;
+                        font-weight: bolder;
+                    } 
+                }
+                .decrease-btn{
+                    border-radius: 15px 0px 0px 15px;
+                }
+                .increase-btn{
+                    border-radius: 0px 15px 15px 0px;
+                }
+                .amount-input{
+                    width: 60%;
+                    border: none;
+                    text-align: center;
+                    
+                }  
+            }
+            p{
+                text-align: center;
+            }
+        
+        }
+    }
+        #shop-div{
+            padding: var(--spacing-medium);
+            margin-bottom: var(--spacing-medium);
+            #go_buy-btn{
+                @extend .btn-outline-success
+            }
+        }
     
-}}
+    
+    
+    
+
+     .about-text{
+        text-indent: var(--text-base);
+        text-align: justify;
+        padding: var(--spacing-small);
+        font-weight: bold;
+    }
+
+    #contact-form{
+        padding-bottom: var(--spacing-medium);
+        font-size: var(--text-small);
+        row-gap: var(--spacing-xsmall);
+        label{
+            font-size: var(--text-base);
+        }
+        .btn{
+            margin-top: var(--spacing-xsmall);
+        }
+    }
+}
+
+
+@media screen and (min-width: 768px), screen and (orientation: landscape){
+    
+    main{
+
+    
+        #about-banner{
+            height: 40vh;
+            object-fit: cover;
+            object-position: 50% 32%;
+        }
+
+        #products_showcase,#month_selection,#national_selection,#imported_selection {
+            .card{
+                
+                .card-img-top{
+                    aspect-ratio: 1/1;
+                }
+                .btn{
+                    font-size:  var(--text-small) ;
+                    font-weight: bold;
+                    
+                    width:var(--text-medium);
+                    
+                }
+                .amount-input_incart{
+                    height:var(--text-medium);
+                    padding-bottom: 3%;
+                    text-align: center;
+                }
+                .bi-trash{
+                    font-size: var(--text-xlarge);
+                    aspect-ratio: 1/1;
+                    text-align: center;
+                    padding-right: 10%;
+                }
+            }
+        
+        
+        }
+        
+                
+            
+            
+    }
+        #shop-div{
+            padding: var(--spacing-medium);
+            margin-bottom: var(--spacing-medium);
+            #cart-total{
+                margin-top: var(--spacing-medium);
+                display: block;
+                padding-right: var(--spacing-small);
+            }
+            #go_buy-btn{
+                display: block;
+                text-align: center;
+                align-self: center;
+                font-size: var(--text-medium);
+                padding: var(--spacing-small);
+               margin-right: auto;
+               margin-left: auto;
+            }
+        }
+}
+
+@media screen and (min-width: 990px), screen and (orientation: landscape){
+
+
+    #products_showcase,#month_selection,#national_selection, #imported_selection {
+        .card{
+            
+            .card-img-top{
+                aspect-ratio: 1/1;
+            }
+        }
+    }
+   
+}

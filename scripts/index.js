@@ -1,13 +1,18 @@
 import { ProductManager } from "./ProductManager/ProductManager.js"
 import { CartManager } from "./CartManager/CartManager.js"
-import {UserManager} from  "./UserManager/UserManager.js"
+// import {UserManager} from  "./UserManager/UserManager.js"
+import { ingredientList } from "./helper/getBooze.js"
+import { getBooze } from "./helper/getBooze.js"
 import { createInventory } from "./helper/inventory.js"
+
 
 const productManager = new ProductManager('products')
 createInventory(productManager)
+getBooze('https://www.thecocktaildb.com/api/json/v1/1/search.php?i=', productManager)
+
 const cartManager = new CartManager
 cartManager.addCart()
-const userManager = new UserManager
+// const userManager = new UserManager
 
 let indexPage = "Inicio"
 let cartPage = "Carrito"
@@ -16,6 +21,12 @@ let cartProducts = cartManager.getStorageCart().products
 let products = productManager.getProducts()
 
 let productsShelf = document.getElementById('products_showcase')
+let  monthSelection = document.getElementById('month_selection')
+let  importedSelection = document.getElementById('imported_selection')
+let  nationalSelection = document.getElementById('national_selection')
+let signupBtn = document.getElementById('sign-up-icon')
+
+
 let cartShelf = document.getElementById('cart_showcase')
 let page = document.getElementsByTagName('title')[0]
 let pageName = page.innerText
@@ -25,20 +36,131 @@ let desktopCartCounter = document.getElementById('desktop-cart-counter')
 let mobileCartCounter = document.getElementById('mobile-cart-counter')
 
 
-async function getBooze(link) {
-    const resp = await fetch(link)
-    const data = await resp.json()
-    console.log(data)
-    const inJson = JSON.stringify(data)
-    sessionStorage.setItem('ingredientList',data)
-    
+signupBtn.addEventListener('click',displaySignUp)
+
+function closeWindow(){
+    document.body.removeChild(document.body.lastChild)
 }
 
+function displaySignUp(){
+    let body = document.getElementsByTagName('main')
+    let signUpView = document.createElement('div')
+    signUpView.id="sign-up-wrapper"
+
+    signUpView.innerHTML =
+    `<div id="sign-up-container" class='login-screen container'>
+        <btn id="login-close-btn"  class="btn btn-dark close-btn">x</btn>
+       
+        <div class='login'>
+            <h2>Login</h2>
+            <hr/>
+
+            <form id="sign-up-form" class="row text-center" onSubmit={handleSubmit}>
+                <label class="form-check-label">
+                    Email
+                </label>
+            
+                <input
+                    value=''
+                    type='text'
+                    onChange=''
+                    class='form-control row'
+                    placeholder='Tu email'
+                    name='email'
+                />
+
+                <label class="form-check-label">
+                    Password
+                </label>
+                <input 
+                    value={values.password}
+                    type='password'
+                    onChange='handleInputChange'
+                    class='form-control row'
+                    placeholder='Password'
+                    name='password'
+                />
+
+                <button id="login-btn" class='btn btn-outline-secondary' type='submit'>Login</button>
+
+            </form>
+           
+            <button id="google-login-btn"class='btn btn-outline-primary' onClick=''>
+                <i class="bi bi-google"></i>
+                Entra con Goggle
+            </button>
+
+            <h4 id="register-view-btn" type ="button" >Registrarse</h4>
+     </div>
+    </div>`
+    document.body.appendChild(signUpView)
+    
+    
+
+    
+   let registerView = document.getElementById('register-view-btn')
+   registerView.addEventListener('click', ()=>{
+        signUpView.id="registration-wrapper"
+
+        signUpView.innerHTML =`
+        <div class='registration-screen'>
+            <btn id="register-close-btn"  class="btn btn-dark close-btn">x</btn>
+            <div class='login'>
+                <h2>Registrate</h2>
+                <hr/>
+
+                <form onSubmit={handleSubmit}>
+                <label class="form-check-label">
+                    Email
+                </label>    
+                <input
+                        value=''
+                        type='text'
+                        onChange={handleInputChange}
+                        class='form-control'
+                        placeholder='Tu email'
+                        name='email'
+                    />
+                    <label class="form-check-label">
+                    Password
+                     </label>
+                    <input 
+                        value=''
+                        type='password'
+                        onChange=''
+                        class='form-control my-3'
+                        placeholder='Password'
+                        name='password'
+                    />
+
+                    <button id="create-user" class='btn btn-primary' type='submit'>Crear usuario</button>
+                    
+                </form>
+
+            </div>
+        </div>`
+    let registerCloseBtn = document.getElementById('register-close-btn')
+    registerCloseBtn.addEventListener('click',closeWindow)
+   })
+
+   let closeBtn= document.getElementById('login-close-btn')
+   closeBtn.addEventListener('click', closeWindow)
+    
 
 
-  getBooze("https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list")
+function createList(pm,listName, idsArr){
+    while (pm.getListProducts(listName)==="no list found"||products.includes(null)){
+        pm.copyProductsByIds(idsArr, listName)
+        let products = pm.getListProducts(listName)
+        break
+    }
+}
 
+createList(productManager,'month',[17,18,26,112,117])
+createList(productManager,'imported',[1,9,7,93])
+createList(productManager,"national",[2,13,14,12])
 
+}
 
 function isCartEmpty(){
 
@@ -54,38 +176,54 @@ function isCartEmpty(){
     mobileCartCounter.innerText = cartManager.countCartItems()
 }  
     
-isCartEmpty()
 
 
 
+function minText(string){
+    let minText = string
+    while(string && string.length >160){
+        let start = string.substring(0,160)
+        let end = string.substring(161)
+        let endDot = end.split(".")[0]
+        let endComma= end.split(",")[0]
+        if(endDot.length < endComma.length){
+            minText= `${start+endDot}.`
+        }else{
+            minText=`${start+endComma}.`
+        }
+        break
+    }
+    return minText
+}
 
 function addToCart(event){
+
+    console.log(event)
     let productId = event.target.id
     productId = parseInt(productId.split('-')[0])
-    let addBtn = document.getElementById(`${productId}-addToCart-button`)
-    let quantityElement = document.getElementById(`${productId}_amount`)
-    let quantity= parseInt(quantityElement.value)
-    let stock = productManager.getProductById(productId).stock
-    let cartCounter = 0
-    // let quantity = cartManager.addToCart(productId,productManager)
-    quantity > stock 
-    ? quantity = stock
-    : quantity 
-    quantityElement.value = quantity
+    
+    if(event.target.id===`${productId}-addToCart-button`){
+        let quantityElement = document.getElementById(`${productId}-amount`)
+        let addToCartBtn = document.getElementById(`${productId}-addToCart-button`)
+        let quantity= parseInt(quantityElement.value)
+        let inCart = cartManager.getStorageCart()
+        inCart= (inCart.products.find(p => p.id === productId))||0
+        let stock = productManager.getProductById(productId).stock
+        let cartCounter = 0
 
-    if(stock === 0){
-            
-        addBtn.className = `${addBtn.className} disabled`
-        addBtn.ariaDisabled = "true"
+        if( inCart !== 0 && inCart.quantity+quantity > stock){
+            addToCartBtn.className = `btn btn-secondary addtocart disabled`
+            addToCartBtn.ariaDisabled = "true"
         
-    }else{
-
-        addBtn.className = "btn btn-secondary addtocart" 
-        cartCounter= cartManager.addToCart(productId,productManager, quantity)
-        quantityElement.max= stock 
-        desktopCartCounter.innerText= cartCounter
-        mobileCartCounter.innerText= cartCounter
-        isCartEmpty()
+        }else{
+            cartCounter= cartManager.addToCart(productId,productManager, quantity)            
+            desktopCartCounter.innerText= cartCounter
+            mobileCartCounter.innerText= cartCounter
+            addToCartBtn.className = "btn btn-secondary addtocart"
+            addToCartBtn.ariaDisabled="false"
+            isCartEmpty()
+            updateCartTotal()
+        }
     }
 
 }
@@ -98,81 +236,144 @@ function updateCartTotal(){
 
 function increaseItem(event){
 
-    let productId = event.target.id
-    productId = parseInt(productId.split('-')[0])
-    let decBtn = document.getElementById(`${productId}-decrease_product_button`)
-    
+    let eventId = event.target.id
+    let productId = parseInt(eventId.split('-')[0])
+    console.log(productId)
+    while(eventId ===`${productId}-increase-btn`){
+        let decBtn = document.getElementById(`${productId}-decrease-btn`)
+        let addBtn = document.getElementById(`${productId}-increase-btn`)
+        let quantityElement = document.getElementById(`${productId}-amount`)
+        let stock = productManager.getProductById(productId).stock
+        let cartCounter = 0
+        let quantity= parseInt(quantityElement.value)
+        let inCart = cartManager.getStorageCart()
+        inCart= inCart.products.find(p => p.id === productId)||0
 
-    
-    let addBtn = document.getElementById(`${productId}-increase_product_button`)
-
-
-    let quantityElement = document.getElementById(`${productId}-amount_incart`)
-    let quantity= cartManager. getCartProductById(productId).quantity +1
-    quantityElement.value= quantity
-    let stock = productManager.getProductById(productId).stock
-
-    let cartCounter = 0
-    
-    if(quantity > stock){
+        if(inCart === 0||quantity < stock||(quantity+inCart.quantity) < stock){
             
-        addBtn.className = `${addBtn.className} disabled`
-        addBtn.ariaDisabled = "true"
-        quantityElement.value= stock
-    }else{
-        decBtn.className = "btn btn-secondary cartDecreaseBtn"
-        addBtn.className = "btn btn-secondary cartIncreaseBtn"
-        addBtn.ariaDisabled = "false"
-        cartCounter= cartManager.addToCart(productId,productManager, 1)
-        quantityElement.max= stock 
-        desktopCartCounter.innerText= cartCounter
-        mobileCartCounter.innerText= cartCounter
-        isCartEmpty()
-        updateCartTotal()
+            decBtn.className = "amount-btn decrease-btn"
+            addBtn.className = "amount-btn increase-btn"
+            addBtn.className = "amount-btn increase-btn"
+
+
+            if(pageName!=='Carrito'){
+              quantityElement.value = quantity+1
+              
+            }else{
+                cartCounter= cartManager.addToCart(productId,productManager, 1)
+                quantityElement.value = quantity+1
+                quantityElement.max= stock 
+                desktopCartCounter.innerText= cartCounter
+                mobileCartCounter.innerText= cartCounter
+                isCartEmpty()
+                updateCartTotal()
+            }
+            
+        }else{
+            addBtn.className = `amount-btn increase-btn disabled`
+            addBtn.ariaDisabled = "true"
+            quantityElement.value= stock
+        }
+        break
     }
 
 }
 
 function decreaseItem(event){   
 
-    let productId = event.target.id
-    productId = parseInt(productId.split('-')[0])
-    let decBtn = document.getElementById(`${productId}-decrease_product_button`)
-    let addBtn = document.getElementById(`${productId}-increase_product_button`)
-    let quantityElement = document.getElementById(`${productId}-amount_incart`)
-    let quantity= cartManager.getCartProductById(productId).quantity 
-    quantityElement.value= quantity
-    let stock = productManager.getProductById(productId).stock
+    let eventId = event.target.id
+    let productId = parseInt(eventId.split('-')[0])
+    console.log(productId)
+    while(eventId ===`${productId}-decrease-btn`){
+        let decBtn = document.getElementById(`${productId}-decrease-btn`)
+        let addBtn = document.getElementById(`${productId}-increase-btn`)
+        let addToCartBtn = document.getElementById(`${productId}-addToCart-button`)
+        let quantityElement = document.getElementById(`${productId}-amount`)
+        let stock = productManager.getProductById(productId).stock
+        let cartCounter = 0
+        let quantity= parseInt(quantityElement.value)
+        let inCart = cartManager.getStorageCart()
+        inCart= inCart.products.find(p => p.id === productId)||0
 
-    let cartCounter = 0
-    
-    if(quantity === 0){
+        if(quantity > 1){
+            decBtn.className = "amount-btn decrease-btn"
+            addBtn.className = "amount-btn increase-btn"
+            addBtn.ariaDisabled = "false"
+            if(pageName!=='Carrito' ){
+            debugger
+                --quantity
+                quantityElement.value = quantity
+                if(inCart!== 0 && inCart.quantity+quantity <= stock){
+                    addToCartBtn.className = "btn btn-secondary addtocart"
+                    addToCartBtn.ariaDisabled="false"
+                }
+              return 
+            }
             
-        decBtn.className = `${decBtn.className} disabled`
-        decBtn.ariaDisabled = "true"
-        quantityElement.value= 0
-    }else{
-        addBtn.className = "btn btn-secondary cartIncreaseBtn"
-        decBtn.className = "btn btn-secondary cartIncreaseBtn"
-        decBtn.ariaDisabled = "false"
-        cartCounter= cartManager.addToCart(productId,productManager, -1)
-        quantityElement.max= stock 
-        desktopCartCounter.innerText= cartCounter
-        mobileCartCounter.innerText= cartCounter
-        updateCartTotal()
-        isCartEmpty()
-        
+
+            cartCounter= cartManager.addToCart(productId,productManager, -1)
+            quantityElement.value = quantity-1
+            quantityElement.max= stock 
+            desktopCartCounter.innerText= cartCounter
+            mobileCartCounter.innerText= cartCounter
+            isCartEmpty()
+            updateCartTotal()
+        }else{
+            decBtn.className = `amount-btn decrease-btn disabled`
+            decBtn.ariaDisabled = "true"
+            
+        }
+        break
     }
-    cartManager.getCartTotal()
+
+}
+
+
+function changeItemAmount(event){
+    debugger    
+    const eventId = event.target.id
+    const productId = parseInt(eventId.split('-')[0])
+    console.log(productId)
+    while(event.target.id ===`${productId}-amount`){
+        let cartCounter=0
+        let quantityElement = document.getElementById(`${productId}-amount`)
+        let quantity= parseInt(quantityElement.value)
+        let cart = cartManager.getStorageCart()
+        let newCart ={}
+        let stock = parseInt(quantityElement.max)
+        console.log(stock)
+        let inCart= cart.products.findIndex(p => p.id === productId)
+        let product = cart.products[inCart]
+        quantity > stock 
+        ? quantity = stock
+        : quantity 
+        quantityElement.value = quantity
+
+        if(pageName ==="Carrito" && quantity <= stock){
+            
+            cart.products[inCart].quantity = quantity
+            newCart = cart
+            cartManager.updateCart(newCart)
+            cartCounter = cartManager.countCartItems()
+            desktopCartCounter.innerText = cartCounter
+            mobileCartCounter.innerText = cartCounter
+            updateCartTotal()
+            isCartEmpty()
+            
+        }else{
+            return quantityElement.value=quantity
+        }
+        break
+    }   
 }
 
 function deleteFromCart(event){
-
-    let productId = event.target.id
-    productId = parseInt(productId.split('-')[0])
-    let res = prompt(`Estas seguro de que quieres eliminar el producto: 1.si/ 2.no`)
-    res= parseInt(res)
-    if(res === 1){
+    
+    const eventId = event.target.id
+    const productId = parseInt(eventId.split('-')[0])
+    console.log(eventId)
+    while(eventId === `${productId}-del-confirm`){
+        
         cartManager.deleteCartProductById(productId)
         let cartCounter = cartManager.countCartItems()
         desktopCartCounter.innerText= cartCounter
@@ -180,101 +381,189 @@ function deleteFromCart(event){
         isCartEmpty()
         updateCartTotal()
         window.location.reload();
-    }else if(res === 2){
-        return
-    }else{
-        alert(`respuesta no valida`)
+        break
     }
-}
+    
+}   
+    
 
-function displayProducts(arr, element){
 
-    arr.forEach(p => { element.innerHTML += `
+
+function displayProducts(arr, element, listName){
+
+    if (listName === undefined){
+        arr.forEach(p => { element.innerHTML += 
+            
+        !p?`<h3>Loading...</h3>`   
+            
+        :
+        `
         <div class= "col-sm-12 col-md-6 col-lg-4 col-xlg-3">
             <div id="${p.id}" class="card">
+                
                 <a id="${p.id}-link" href="#productview/${p.title}">
-                    <img id="${p.id}-img"src="${pageName === 'Inicio'? p.thumbnail:'.'+p.thumbnail}" class="card-img-top" alt="${p.title}">
+                    <img id="${p.id}-img"src="${(pageName === 'Inicio'||p.db === "coktaildb")? p.thumbnail:'.'+p.thumbnail}" class="card-img-top" alt="${p.title}">
                 </a>
                 <div class="card-body">
-                    <h5 class="card-title"> Nombre :  ${p.title}</h5>
-                    <p class="card-text">${p.description}.</p>
+                    <h3 class="card-title">  ${p.title}</h3>
+                    <h4 class="card-text">${minText(p.description)}.</h4>
                     <p id="${p.id}-item_price" class="item-price"> Precio:  $${p.price}</p>
-                    <div id="add_cart_button">  
-                        <input class= "amount-input" id="${p.id}_amount" type="number" min="1" max="${p.stock}">                   
+                    <div id="add_cart_button">
+                        <div class="amount-wrapper">
+                            <span id="${p.id}-decrease-btn" class="amount-btn decrease-btn" type= "button" >-</span>
+                            <input class= "amount-input" id="${p.id}-amount" type="number" value="1" min="1" max="${p.stock}">
+                            <span id="${p.id}-increase-btn" class="amount-btn increase-btn" type="button">+</span>   
+                        </div>                 
                         <button id= "${p.id}-addToCart-button"  type="button" class="btn btn-secondary addtocart">Agregar</button>
+                                    
                     </div>
+                </div>   
+                    
                 </div>
             
             </div>
         
         </div>
     
-    `})
+        `})
+    } else{
 
-    let  btnAddToCart = document.getElementsByClassName('addtocart')
+         arr = productManager.getListProducts(listName)
+         arr.forEach((p) => {
+            
+            
+                element.innerHTML+=
+                
+                !p?`<h3>Loading...</h3>`   
+                :
+                `
+                
+                    <div class= "col-sm-12 col-md-6 col-lg-4 col-xlg-3">
+                        <div id="${p.id}" class="card">
+                            <a id="${p.id}-link" href="#productview/${p.title}">
+                                <img id="${p.id}-img"src="${(pageName === 'Inicio'||p.db === "coktaildb")? p.thumbnail:'.'+p.thumbnail}" class="card-img-top" alt="${p.title}">
+                            </a>
+                            <div class="card-body">
+                                <h3 class="card-title">${p.title}</h3>
+                                <h4 class="card-text">${minText(p.description)}.</h4>
+                                <p id="${p.id}-item_price" class="item-price"> Precio:  $${p.price}</p>
+                                <div id="add_cart_button">
+                                    <div class="amount-wrapper">
+                                        <span id="${p.id}-decrease-btn" class="amount-btn decrease-btn" type= "button" >-</span>
+                                        <input class= "amount-input" id="${p.id}-amount" type="number" value="1" min="1" max="${p.stock}">
+                                        <span id="${p.id}-increase-btn" class="amount-btn increase-btn" type="button">+</span>  
+                                    </div>                 
+                                    <button id= "${p.id}-addToCart-button"  type="button" class="btn btn-secondary addtocart">Agregar</button>
+                                    
+                                </div>
+                            </div>
+                        
+                        </div>
+                
+                    </div>
+               
+                `
+                
+            })
+                
+        }
 
-    for (const btn of btnAddToCart) {
-        btn.addEventListener('click', addToCart)
-    }
+         element.addEventListener('click',addToCart )
+         element.addEventListener('click',increaseItem)
+         element.addEventListener('click',decreaseItem)
+         element.addEventListener('change',changeItemAmount )   
+    // let  btnAddToCart = document.getElementsByClassName('addtocart')
 
+    // for (const btn of btnAddToCart) {
+    //     btn.addEventListener('click', addToCart)
+    // }
 
 }
+
 
 function displayCart(arr, element){
     arr.forEach(p => { element.innerHTML += `
             
     
-            <div class="card mb-3" style="max-width: 100%">
+            <div class="card mb-3 cart-card" style="max-width: 100%">
             <div class="row g-0">
                 <div class="row g-0 d-flex align-items-center card-body">
 
                     <div class="col-2">
-                        <img src=".${p.thumbnail}" class="img-fluid rounded-start" alt="...">
+                        <img src="${p.db === "coktaildb"? p.thumbnail:"."+p.thumbnail}" class="img-fluid rounded-start" alt="...">
                     </div>
                     <div class="col-6 text-center ">
-                        <h4 class="card-title ">${p.title}</h4>
+                        <h3 class="card-title ">${p.title}</h3>
                     </div>
-                    <div class="col">
-                        
-                        <button id="${p.id}-decrease_product_button" class="btn btn-secondary cartDecreaseBtn">-</button>
-                        <input class= "amount-input_incart" id="${p.id}-amount_incart" placeholder="${p.quantity}" type="number" min="1" max="${p.stock}">
-                        <button id="${p.id}-increase_product_button" class="btn btn-secondary cartIncreaseBtn">+</button>
+                    <div id="cart-amount-wrapper" class="col">
+                        <div class="amount-wrapper">
+                                <span id="${p.id}-decrease-btn" class="amount-btn decrease-btn" type= "button" >-</span>
+                                <input class= "amount-input" id="${p.id}-amount" type="number" value="${p.quantity}" min="1" max="${p.stock}">
+                                <span id="${p.id}-increase-btn" class="amount-btn increase-btn" type="button">+</span>   
+                        </div>  
+                       
                         <p class="card-text"><small class="text-body-secondary"> Hay ${p.stock} disponibles</small></p>
                     </div>
                     
                     <div class="col d-flex justify-content-around">
-                        <h4>$${p.quantity+p.price}</h4>
-                       <button id="${p.id}-delete_button" class="btn btn-outline-secondary deletebtn ">
+                        <p class="cart-item-price"><bold>$${p.quantity+p.price}</bold></p>
+                       <button id="${p.id}-delete_button" class="btn btn-outline-secondary deletebtn" data-bs-toggle="modal" data-bs-target="#${p.id}modal">
                             <i id="${p.id}-delete_icon" class="bi bi-trash"></i>
                        </button> 
-                        
                     </div>
+                   
+                    <div class="modal fade" id="${p.id}modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="${p.id}Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title fs-5" id="${p.id}Label">Eliminar Producto</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                               Quieres eliminar ${p.title} de tu selección?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="${p.id}-del-confirm" class="btn btn-primary">Eliminar</button>
+                                <button  type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
           </div>
     `})
 
-    let  btnMoreItem = document.getElementsByClassName('cartIncreaseBtn')
-    let  btnLessItem =  document.getElementsByClassName('cartDecreaseBtn')
-    let  btnDeleteItem = document.getElementsByClassName('deletebtn')
-    for (const btn of btnMoreItem) {
-        btn.addEventListener('click',  increaseItem)
-    }
-    for (const btn of btnDeleteItem) {
-        btn.addEventListener('click', deleteFromCart)
-    }
-    for (const btn of btnLessItem) {
-        btn.addEventListener('click', decreaseItem)
-    }
+    element.addEventListener('click',increaseItem)
+    element.addEventListener('click',decreaseItem)
+    element.addEventListener('change',changeItemAmount)
+    element.addEventListener('click',deleteFromCart)
+    
+    // let  btnMoreItem = document.getElementsByClassName('increase-btn')
+    // let  btnLessItem =  document.getElementsByClassName('decrease-btn')
+    // let  btnDeleteItem = document.getElementsByClassName('deletebtn')
+    // for (const btn of btnMoreItem) {
+    //     btn.addEventListener('click',  increaseItem)
+    // }
+    // for (const btn of btnDeleteItem) {
+    //     btn.addEventListener('click', deleteFromCart)
+    // }
+    // for (const btn of btnLessItem) {
+    //     btn.addEventListener('click', decreaseItem)
+    // }
 
     
 
     const cartMain = document.getElementById('cart-container')
     let shopDiv = document.createElement('div')
     let content= `<div class="row justify-content-end ">
-    <div class="col-sm-12 col-md-6 col-lg-6 p-1 text-end">
-    <h4 id= "cart-total"> Total : $ ${cartManager.getCartTotal()} </h4>
-    <button id="go_buy-btn" class="btn btn-primary p-1"> Comprar </button>
+    <div class="col-sm-12 col-md-6 col-lg-6 p-1 align-middle text-end">
+    <h3 id= "cart-total"> Total : $ ${cartManager.getCartTotal()} </h3>
+    <a href="../pages/checkout.html">
+        <button id="go_buy-btn" class="btn btn-primary p-1"> Comprar </button>
+    </a>
+    
     </div>
     </div>
     `
@@ -284,31 +573,84 @@ function displayCart(arr, element){
     cartMain.appendChild(shopDiv)
     let newShopDiv =  document.getElementById("shop-div")  
     newShopDiv.innerHTML= content
+    
+}
 
- }
+function displayCheckout(total){
+    let checkoutTotal= document.getElementById('checkout-total')
+        checkoutTotal.innerText= `Pagas: $${total}`
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', (event) => {
+          event.preventDefault(); // Prevent form submission
+          
+          const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+          
+          // Validate form inputs based on payment method
+          if (paymentMethod === 'credit-card' || paymentMethod === 'debit-card') {
+            const cardNumber = document.querySelector('#card-number').value;
+            const expirationDate = document.querySelector('#expiration-date').value;
+            const cvv = document.querySelector
+        
+          }
+        })
+    }
+
+
+isCartEmpty() 
 
 
 if(pageName === indexPage){
     isCartEmpty()
     desktopCart.style.backgroundImage="url(assets/icons/icon-cart.svg)"
-    mobileCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
+    mobileCart.style.backgroundImage="url(assets/icons/icon-cart.svg)"
 
-    displayProducts(products,productsShelf)
+    displayProducts(products,monthSelection,"month")
+    displayProducts(products,importedSelection,"imported")
+    displayProducts(products,nationalSelection, "national")
 
 }else if(pageName === cartPage){
-    cartProducts
+    
     isCartEmpty()
+    desktopCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
+    mobileCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
     displayCart(cartProducts, cartShelf)  
 }else{
     isCartEmpty()
     desktopCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
     mobileCart.style.backgroundImage="url(../assets/icons/icon-cart.svg)"
     products = products.filter( p => p.category === pageName.toLowerCase())
-    displayProducts(products,productsShelf)
-
-    
+    displayProducts(products,productsShelf)    
 }
-   
+ 
+if(pageName === "Checkout"){
+    displayCheckout(cartManager.getCartTotal())
+}
+// const form = document.querySelector('#contact-form');
+// const nameInput = document.querySelector('#name');
+// const emailInput = document.querySelector('#email');
+// const messageInput = document.querySelector('#message');
 
-    
+// form.addEventListener('submit', (event) => {
+//   event.preventDefault(); // Prevent form submission
+  
+//   // Validate form inputs
+//   if (!nameInput.value || !emailInput.value || !messageInput.value) {
+//     alert('Please fill in all required fields');
+//     return;
+//   }
+  
+//   // Send email using emailjs
+//   emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+//     from_name: nameInput.value,
+//     reply_to: emailInput.value,
+//     message: messageInput.value
+//   }).then((response) => {
+//     alert('Your message has been sent!');
+//     form.reset();
+//   }, (error) => {
+//     alert('Oops, something went wrong. Please try again later.');
+//     console.error(error);
+//   });
+// });
 

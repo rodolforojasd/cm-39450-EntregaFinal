@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous"> 
+    <link class ="icon" rel="icon" type="image/x-icon" href="/assets/icons/union-licorera-website-favicon-white.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous"> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="styles/style.css" >
+    
     <title>Inicio</title>
 </head>
 <body class="container-fluid">
@@ -14,7 +16,7 @@
     <header id="header" class="header-area">
         <div id="header-logo-area"class="row">
             <div class="col">
-                <a href="/index.html"><img id="big-logo"  src="/assets/icons/logo.webp"></a>
+                <a href="/index.html"><img class="icon" id="big-logo"  src="/assets/icons/logo.webp"></a>
             </div>
             <div id="desktop-cart" class="col">
                 <a id="cart-link" href="/pages/cart.html">
@@ -26,16 +28,20 @@
         <nav id ="nav-menu" class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
             <a class="navbar-brand" href="index.html">
-                <img id="logo-small" src="assets/icons/logo.webp">
+                <img id="logo-small" src="/assets/icons/faviconb.svg">
             </a >
-            <img id="sign-up-icon" src="assets/icons/user_icon.svg">
             
+                <img type="button" id="sign-up-icon" src="assets/icons/user_icon.svg">
             
-            <div id="mobile-cart">
-                    <a id="mobile-cart-link" href="/pages/cart.html">
-                        <span id="mobile-cart-counter"></span>
-                    </a>
-            </div>                    
+           
+            
+            <div id="cart-wrapper">
+                <div id="mobile-cart">      
+                </div>                    
+                <a id="mobile-cart-link" href="/pages/cart.html">
+                    <span id="mobile-cart-counter"></span>
+                </a>
+            </div>
             
             
             
@@ -63,6 +69,9 @@
                     <a class="nav-link" href="/pages/licores.html">Licores</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/pages/bebidas.html">Bebidas</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/pages/comida.html">Comida</a>
                 </li>
                 <li class="nav-item">
@@ -75,26 +84,157 @@
                     <a class="nav-link" href="/pages/contacto.html">Contacto</a>
                 </li>
                 </ul>
-                <form id = "search_bar" class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
             </div>
         </nav>
+        <form id ="search_bar" class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
     </header>
-    <main class="container">
-        <div id="banner" class="row"></div>
+    <main class="container-fluid">
+
+
+
+
+              <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                  <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="/assets/imgs/banner/vinos-banner.png" class="d-block w-100 banner-img" alt="botella de malbec">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="/assets/imgs/banner/cervezas-belgas.png" class="d-block w-100 banner-img" alt="variedad de cervezas belgas">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="/assets/imgs/banner/gin-banner.png" class="d-block w-100 banner-img" alt="gin coktails">
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+
+
+
+
+
+        <section id="monthp-wrapper">
+            <h3 class="center-text" class="row"> Productos Nacionales Premium</h3>
+            <div id="month_selection" class="row"></div>
+        </section>
+        <section id="importedlp-wrapper">
+            <h3 class="center-text"> Productos Nacionales Premium</h3>
+            <div id="imported_selection" class="row"></div>
+        </section>
+        <section id="nationalp-wrapper">
+            <h3 class="center-text"> Productos Nacionales Premium</h3>
+            <div id="national_selection" class="row"></div>
+        </section>
+
+
         <div id="products_showcase" class="row"></div>
         <div id="item_detail"></div>
         
     </main>
-    <footer class="container">
-            
+    <footer id="footer-section" class="container-fluid">
+        <div class="row text-center">
+            <section class="col-sm-12 col-md-6 col-lg-4 col-xlg-4">
+                <div class="row footer_wrapper">
+                    <a href="/index.html"><img class="icon" id="footer-logo"  src="/assets/icons/logo.webp"></a>
+                </div>
+                <div class="row footer_wrapper">
+                    <input id="footer-newsletter" placeholder="Entra tu correo y recibe nuestras ofertas!">
+                </div>
+                <div class="row text-center footer_wrapper ">
+                    <i class="bi bi-instagram"></i>
+                    <i class="bi bi-twitter"></i>
+                    <i class="bi bi-whatsapp"></i>
+                </div>
+                
+            </section>
+            <section class="col-sm-6 col-md-6 col-lg-4 col-xlg-4">
+                <div class=" row footer_wrapper">
+                    
+                    <h4 class="text-center">Directorio</h4>
+                    <div class="col text-start directory-col-l">
+                        <a class="footer_link" href="/pages/whiskies.html">
+                            <p class="footer-text">whiskies</p>
+                        </a>
+                        <a class="footer_link" href="/pages/vinos.html">
+                            <p class="footer-text">vinos</p>
+                        </a>
+                        <a class="footer_link" href="/pages/cervezas.html">
+                            <p class="footer-text">cervezas</p> 
+                        </a>
+                        <a class="footer_link" href="/pages/licores.html">
+                            <p class="footer-text">licores</p>
+                        </a>
+                        <a class="footer_link" href="/pages/burbujas.html">
+                            <p class="footer-text">burbujas</p> 
+                        </a>
+                        
+                       
+                        
+                        
+                        
+                    </div>
+                    <div class="col text-start directory-col-r">
+                        <a href="/pages/comida.html">
+                            <p class="footer-text">comida</p>
+                        </a>
+                        <a href="/pages/bebidas.html">
+                            <p class="footer-text">bebidas</p>
+                        </a>
+                        <a href="/pages/varios.html">
+                            <p class="footer-text">varios</p> 
+                        </a>
+                        <a href="/pages/nosotros.html">
+                            <p class="footer-text">sobre nosotros</p>
+                        </a>
+                        <a href="/pages/contacto.html">
+                            <p class="footer-text">contáctanos</p> 
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col-sm-6 col-md-6 col-lg-4 col-xlg-4">
+                <div class=" row footer_wrapper">
+                    
+                    <h4 class="text-center">Delivery</h4>
+                    <div class="row text-center ">
+                        <p> De Lunes a Sabado desde las 8 am hasta las 6pm</p>
+                        <p> Todas las compras realizadas antes de las 2pm se entregan el mismo día</p>
+                
+                    </div>
+                </div>
+                <div class=" row footer_wrapper">
+                    
+                    <h4 class="text-center">Medios de Pago</h4>
+                    <div class="col text-center ">
+                        <img class="footer-payment-icon" src="/assets/icons/icons8-mastercard-logo-100.svg">
+                        <img class="footer-payment-icon" src="/assets/icons/icons8-visa-100.svg">
+                        <img class="footer-payment-icon" src="/assets/icons/icons8-mercado-pago-100.svg">
+                
+                    </div>
+                </div>      
+            </section>
+        </div>
+        
     </footer>
    <script type="module" src="scripts/index.js"></script> 
    <script nomodule src="scripts/fallback.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
 </body>
-</body>
+
 </html>
